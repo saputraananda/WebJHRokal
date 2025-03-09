@@ -1,0 +1,315 @@
+@php
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\View;
+@endphp
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    @yield('title')
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href={{ asset('assets/img/jimmy.png') }} rel="icon">
+    <link href={{asset('assets/img/jimmy.png')}}rel="apple-touch-icon">
+
+    <!-- Link Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/quill/quill.snow.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+
+
+    <!-- Template Main CSS File -->
+    <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .otomatis{
+            color:rgb(255, 0, 0);
+        }
+        .copirite {
+            margin-top: -20px;
+        }
+
+        .puter {
+            margin-top: -30px;
+        }
+
+        .btn-custom {
+            width: 120px;
+            /* Set a fixed width or adjust as needed */
+            margin-top: 20px;
+        }
+
+        .text-danger {
+            color: red;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            background-color: transparent !important;
+            /* Hilangkan warna biru */
+            box-shadow: none !important;
+            /* Hilangkan efek bayangan */
+            outline: none;
+            /* Hilangkan outline */
+        }
+
+        /* Style untuk tabel */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: center; /* Pusatkan teks secara horizontal */
+        }
+
+        /* Header tabel */
+        .table thead th {
+            background-color: #119E45; /* Hijau */
+            color: white;
+            padding: 10px;
+            text-align: center !important;
+            border: 1px solid #ddd;
+            vertical-align: middle; /* Pusatkan teks secara vertikal */
+        }
+
+        /* Sel tabel */
+        .table tbody td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            vertical-align: middle; /* Pusatkan teks secara vertikal */
+            text-align: center; /* Pusatkan teks secara horizontal */
+        }
+
+        /* Alternating row colors for better readability */
+        .table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        /* Hover effect for table rows */
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Rasio 16:9 (lebar/tinggi * 100) */
+            height: 0;
+            overflow: hidden;
+        }
+
+        /* Gaya untuk iframe */
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        
+    </style>
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href=" " class="logo d-flex align-items-center">
+                <img src="{{asset('assets/img/jimmy.png')}}" alt="">
+                <span class="d-none d-lg-block">Jimmy Hantu Foundation</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div><!-- End Logo -->
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <!-- <img src={{ asset('assets/img/profil.jpeg') }} alt="Profile" class="rounded-circle"> -->
+                        <span class="d-none d-md-block dropdown-toggle ps-2">Admin Rokal</span>
+                    </a><!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>Admin</h6>
+                            <span>Jimmy Hantu Foundation</span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="dropdown-item d-flex align-items-center">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Log Out</span>
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
+
+            </ul>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.index') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.index') }}">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard Utama</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.penjualan') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.penjualan') }}">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span>Data Penjualan</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.retur') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.retur') }}">
+                <i class="bi bi-backspace"></i>
+                <span>Data Retur</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.setor') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.setor') }}">
+                <i class="bi bi-wallet2"></i>
+                <span>Data Penyetoran</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.create') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.create') }}">
+                <i class="bi bi-file-plus"></i>
+                <span>Tambah Transaksi</span>
+            </a>
+        </li><!-- End Forms Tambah Wajib Pajak -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ Request::routeIs('transaksi.predict') ? '' : 'collapsed' }}" 
+               href="{{ route('transaksi.predict') }}">
+                <i class="bi bi-bar-chart"></i>
+                <span>Prediksi Penjualan</span>
+            </a>
+        </li><!-- End Forms Tambah Wajib Pajak -->
+    </ul>
+</aside><!-- END SIDEBAR-->
+
+    <main id="main" class="main">
+         @yield('content')
+
+         <!-- Copyright -->
+         @unless(View::hasSection('hide_footer'))
+        <footer>
+            <div class="copirite">
+                <div class="text-center text-black p-1">
+                    © Jimmy Hantu Foundation |
+                    <a class="text-black" href="https://petaniberdasi.com">Saatnya Petani Berdasi</a>
+                </div>
+            </div>
+        </footer>
+        @endunless
+        <!-- Copyright -->
+
+    </main>
+
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/chart.js/chart.umd.js') }}"></script>
+    <script src="{{ asset('assets/vendor/echarts/echarts.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/quill/quill.js') }}"></script>
+    <script src="{{ asset('assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('assets/vendor/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/php-email-form/validate.js') }}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cek apakah ada flash message 'success'
+            @if(session('success'))
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: '{{ session("success") }}',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang sudah dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
