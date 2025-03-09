@@ -42,3 +42,50 @@ Website **Roti Kalkun** adalah sistem manajemen transaksi berbasis web yang digu
 ```sh
 git clone https://github.com/username/website-roti-kalkun.git
 cd website-roti-kalkun
+```
+
+### **2️⃣ Install Dependensi**
+```sh
+composer install
+```
+
+---
+
+### **2️⃣ Install Dependensi**
+```sh
+composer install
+```
+
+---
+
+### **3️⃣ Konfigurasi .env**
+Copy file .env.example menjadi .env dan ubah konfigurasi database sesuai kebutuhan.
+```sh
+cp .env.example .env
+```
+Edit file .env untuk mengatur koneksi database:
+```sh
+DB_CONNECTION=
+DB_HOST=
+DB_PORT=
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+```
+
+### **4️⃣ Jalankan Migrasi & Seeder**
+```sh
+php artisan migrate
+php artisan db:seed --class=UserSeeder
+```
+
+---
+
+### **5️⃣ Jalankan Website**
+```sh
+php artisan serve
+```
+
+
+
+
