@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Session;
     <!-- Favicons -->
     <link rel="icon" href="{{asset('assets/img/djp.png')}}" type="image/x-icon">
     <link href="{{ asset('assets/img/jimmy.png') }}" rel="icon">
-    <link href={{asset('assets/img/jimmy.png')}}rel="apple-touch-icon">
+    <link href="{{asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
 
     <!-- Link Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">

@@ -146,7 +146,7 @@
                   <p>Website ini juga memiliki fitur "Tambah Transaksi". Fitur ini memungkinkan admin untuk menginput
                     data
                     penjualan yang masuk setiap hari dan data akan tersimpan di dalam database penjualan.
-                    Silahkan kunjungi <a href={{route('transaksi.create')}}>Tambah Transaksi </a>.
+                    Silahkan kunjungi <a href="{{route('admin.create')}}">Tambah Transaksi </a>.
                   </p>
                 </div>
 

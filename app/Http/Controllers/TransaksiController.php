@@ -16,7 +16,7 @@ class TransaksiController extends Controller
         $totalUangDisetor = Transaksi::sum('uang_disetor');
         $totalPiutang = Transaksi::sum('sisa_piutang');
         $saldo = Transaksi::sum('uang_disetor') + Transaksi::sum('sisa_piutang') ;
-        return view('transaksi.index', compact('jumlahTransaksi','pengambilanRoti','jumlahRetur','totalUangDisetor','totalPiutang','saldo')); // mengirimkan variabel transaksis ke view
+        return view('admin.index', compact('jumlahTransaksi','pengambilanRoti','jumlahRetur','totalUangDisetor','totalPiutang','saldo')); // mengirimkan variabel transaksis ke view
     }
 
     public function penjualan()
@@ -25,7 +25,7 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'jumlah_pengambilan_roti', 'harga_satuan', 'total_harga']);
 
         // Mengirimkan hanya kolom 6-10 ke view transaksi.penjualan
-        return view('transaksi.penjualan', compact('transaksi'));
+        return view('admin.penjualan', compact('transaksi'));
     }
 
     public function penjualanSupervisor()
@@ -43,7 +43,7 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'jumlah_pengambilan_roti', 'jumlah_retur', 'harga_satuan', 'total_retur']);
 
         // Mengirimkan hanya kolom 6-10 ke view transaksi.penjualan
-        return view('transaksi.retur', compact('transaksi'));
+        return view('admin.retur', compact('transaksi'));
     }
 
     public function returSupervisor()
@@ -61,7 +61,7 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'total_setoran', 'uang_disetor', 'sisa_piutang', 'tanggal_setor', 'penerima_setoran']);
 
         // Mengirimkan hanya kolom 6-10 ke view transaksi.penjualan
-        return view('transaksi.setor', compact('transaksi'));
+        return view('admin.setor', compact('transaksi'));
     }
 
     public function setorSupervisor()
@@ -75,7 +75,7 @@ class TransaksiController extends Controller
 
     public function create()
     {
-        return view('transaksi.create');
+        return view('admin.create');
     }
 
     public function store(Request $request)
@@ -124,12 +124,12 @@ class TransaksiController extends Controller
     public function edit($id)
     {
         $transaksi = Transaksi::findOrFail($id); // Cari data transaksi berdasarkan ID
-        return view('transaksi.edit', compact('transaksi'));
+        return view('admin.edit', compact('transaksi'));
     }
 
 
     public function update(Request $request, $id)
-{
+    {
     $transaksi = Transaksi::findOrFail($id); // Ambil data transaksi berdasarkan ID
 
     // Validasi data

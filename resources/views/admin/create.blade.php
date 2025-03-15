@@ -26,7 +26,7 @@
                                 Form Input Transaksi Penjualan</h4>
 
                             <!-- General Form Elements -->
-                            <form action="{{ route('transaksi.store') }}" method="POST">
+                            <form action="{{ route('admin.store') }}" method="POST">
                                 @csrf
 
                                 <div class="row mb-3">

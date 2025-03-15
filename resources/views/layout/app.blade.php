@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\View;
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href={{ asset('assets/img/jimmy.png') }} rel="icon">
-    <link href={{asset('assets/img/jimmy.png')}}rel="apple-touch-icon">
+    <link href="{{ asset('assets/img/jimmy.png') }}" rel="icon">
+    <link href="{{ asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
 
     <!-- Link Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -195,48 +195,48 @@ use Illuminate\Support\Facades\View;
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.index') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.index') }}">
+            <a class="nav-link {{ Request::routeIs('admin.index') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.index') }}">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard Utama</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.penjualan') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.penjualan') }}">
+            <a class="nav-link {{ Request::routeIs('admin.penjualan') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.penjualan') }}">
                 <i class="bi bi-receipt-cutoff"></i>
                 <span>Data Penjualan</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.retur') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.retur') }}">
+            <a class="nav-link {{ Request::routeIs('admin.retur') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.retur') }}">
                 <i class="bi bi-backspace"></i>
                 <span>Data Retur</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.setor') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.setor') }}">
+            <a class="nav-link {{ Request::routeIs('admin.setor') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.setor') }}">
                 <i class="bi bi-wallet2"></i>
                 <span>Data Penyetoran</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.create') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.create') }}">
+            <a class="nav-link {{ Request::routeIs('admin.create') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.create') }}">
                 <i class="bi bi-file-plus"></i>
                 <span>Tambah Transaksi</span>
             </a>
         </li><!-- End Forms Tambah Wajib Pajak -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('transaksi.predict') ? '' : 'collapsed' }}" 
-               href="{{ route('transaksi.predict') }}">
+            <a class="nav-link {{ Request::routeIs('admin.predict') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.predict') }}">
                 <i class="bi bi-bar-chart"></i>
                 <span>Prediksi Penjualan</span>
             </a>

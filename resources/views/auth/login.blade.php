@@ -7,9 +7,8 @@
     <title>Halaman Login | Jimmy Hantu Foundation</title>
 
     <!-- Favicons -->
-    <link href={{ asset('assets/img/jimmy.png') }} rel="icon">
-    <link href={{asset('assets/img/jimmy.png')}}rel="apple-touch-icon">
-
+    <link href="{{ asset('assets/img/jimmy.png') }}" rel="icon">
+    <link href="{{ asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -121,10 +120,7 @@
                         @endfor
                     </div>
                 </div>
-
             </div>
-
-
         </div>
     </div>
 </body>

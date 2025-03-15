@@ -10,9 +10,14 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            return (Auth::user()->role === 'admin')
+                ? redirect()->route('admin.index')
+                : redirect()->route('supervisor.index');
+        }
         return view('auth.login');
     }
-
+    
     public function login(Request $request)
     {
         $request->validate([
@@ -20,24 +25,15 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('username', 'password');
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
+            session(['username' => $user->username, 'role' => $user->role]);
 
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            } elseif ($user->isSupervisor()) {
-                return redirect()->route('supervisor.dashboard');
-            }
+            return ($user->role === 'admin')
+                ? redirect()->route('admin.index')
+                : redirect()->route('supervisor.index');
         }
 
-        return back()->withErrors(['loginError' => 'Username atau password salah.']);
-    }
-
-    public function logout()
-    {
-        Auth::logout();
-        return redirect()->route('login')->with('success', 'Anda berhasil logout.');
+        return back()->withErrors(['login' => 'Username atau password salah.'])->withInput();
     }
 }
