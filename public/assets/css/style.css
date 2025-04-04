@@ -1227,6 +1227,26 @@ h6 {
   }
 }
 
+.badge-status {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: white;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.badge-lunas {
+  background: linear-gradient(to right, #4facfe, #01a1a9); /* biru gradasi */
+}
+
+.badge-belum {
+  background: linear-gradient(to right, #ff416c, #ff4b2b); /* merah gradasi */
+}
+
+
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/

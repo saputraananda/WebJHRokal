@@ -221,7 +221,7 @@ use Illuminate\Support\Facades\Session;
             <a class="nav-link {{ Request::routeIs('supervisor.setor') ? '' : 'collapsed' }}" 
                href="{{ route('supervisor.setor') }}">
                 <i class="bi bi-wallet2"></i>
-                <span>Data Penyetoran</span>
+                <span>Data Piutang</span>
             </a>
         </li><!-- End Dashboard Nav -->
 

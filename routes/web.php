@@ -4,13 +4,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Supervisor\SupervisorController;
-use App\Http\Controllers\TransaksiController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Middleware\RoleMiddleware;
 
 // ==========================
 // RUTE UNTUK LOGIN & LOGOUT
@@ -34,33 +29,36 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 // RUTE UNTUK ADMIN 
 // ==========================
 Route::middleware(['auth', 'role:admin','nocache'])->group(function () {
-    Route::get('/dashboard', [TransaksiController::class, 'index'])->name('admin.index');
+    Route::get('/dashboard', [AdminController::class, 'getScorecard'])->name('admin.index');
 
     Route::get('/prediksi', function () {return view('admin.predict');})->name('admin.predict');
 
-    Route::get('/penjualan', [TransaksiController::class, 'penjualan'])->name('admin.penjualan');
-    Route::get('/retur', [TransaksiController::class, 'retur'])->name('admin.retur');
-    Route::get('/setor', [TransaksiController::class, 'setor'])->name('admin.setor');
+    Route::get('/penjualan', [AdminController::class, 'getPenjualanAdmin'])->name('admin.penjualan');
+    Route::get('/retur', [AdminController::class, 'retur'])->name('admin.retur');
+    Route::get('/piutang', [AdminController::class, 'piutang'])->name('admin.piutang');
 
     // Tambah Transaksi
-    Route::get('/tambah', [TransaksiController::class, 'create'])->name('admin.create');
-    Route::post('/', [TransaksiController::class, 'store'])->name('admin.store');
+    Route::get('/tambah', [AdminController::class, 'create'])->name('admin.create');
+    Route::post('/', [AdminController::class, 'store'])->name('admin.store');
 
     // Edit & Update Transaksi
-    Route::get('/transaksi/{id}/edit', [TransaksiController::class, 'edit'])->name('admin.edit');
-    Route::put('/transaksi/{id}', [TransaksiController::class, 'update'])->name('admin.update');
+    Route::get('/transaksi/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
+    Route::put('/transaksi/{id}', [AdminController::class, 'update'])->name('admin.update');
 
     // Hapus Transaksi
-    Route::delete('/transaksi/{id}', [TransaksiController::class, 'destroy'])->name('admin.destroy');
+    Route::delete('/transaksi/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
+
+    // Detail Transaksi
+    Route::get('/transaksi/{id}/detail', [AdminController::class, 'detail'])->name('admin.detail');
 });
 
 // ==========================
 // RUTE UNTUK SUPERVISOR
 // ==========================
 Route::middleware(['auth', 'role:supervisor','nocache'])->group(function () {
-    Route::get('supervisor/', function () {return view('supervisor.index');})->name('supervisor.index');
-    Route::get('/supervisor/penjualan', [TransaksiController::class, 'penjualanSupervisor'])->name('supervisor.penjualan');
-    Route::get('/supervisor/retur', [TransaksiController::class, 'returSupervisor'])->name('supervisor.retur');
-    Route::get('/supervisor/setor', [TransaksiController::class, 'setorSupervisor'])->name('supervisor.setor');
+    Route::get('/supervisor', function () {return view('supervisor.index');})->name('supervisor.index');
+    Route::get('/supervisor/penjualan', [SupervisorController::class, 'penjualanSupervisor'])->name('supervisor.penjualan');
+    Route::get('/supervisor/retur', [SupervisorController::class, 'returSupervisor'])->name('supervisor.retur');
+    Route::get('/supervisor/setor', [SupervisorController::class, 'setorSupervisor'])->name('supervisor.setor');
     Route::get('/supervisor/predict', function () {return view('supervisor.predict');})->name('supervisor.predict');
 });

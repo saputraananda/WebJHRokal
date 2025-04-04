@@ -1,136 +1,288 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ViewCombineTransaction;
+use App\Models\Marketing;
+use App\Models\Roti;
+use App\Models\Setoran;
+use App\Models\Piutang;
+use App\Models\ReturDetail;
+use App\Models\Wilayah;
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
 
 class AdminController extends Controller
 {
-    public function index()
+
+    //Scorecard untuk halaman dashboard Admin
+    public function getScorecard()
     {
-        // Hitung total transaksi dan total uang disetor
-        $jumlahTransaksi = Transaksi::count();
-        $pengambilanRoti = Transaksi::sum('jumlah_pengambilan_roti');
-        $jumlahRetur = Transaksi::sum('jumlah_retur');
-        $totalUangDisetor = Transaksi::sum('uang_disetor');
-        $totalPiutang = Transaksi::sum('sisa_piutang');
-        $saldo = Transaksi::sum('uang_disetor') + Transaksi::sum('sisa_piutang') ;
-        return view('admin.index', compact('jumlahTransaksi','pengambilanRoti','jumlahRetur','totalUangDisetor','totalPiutang','saldo')); // mengirimkan variabel transaksis ke view
+        $jumlahTransaksi = ViewCombineTransaction::count();
+        $pengambilanRoti = ViewCombineTransaction::sum('jumlah_pengambilan');
+        $jumlahRetur = ViewCombineTransaction::sum('jumlah_retur');
+        $totalUangDisetor = ViewCombineTransaction::sum('total_penjualan') - ViewCombineTransaction::sum('saldo_piutang');
+        $totalPiutang = ViewCombineTransaction::sum('saldo_piutang');
+        $saldo = ViewCombineTransaction::sum('total_penjualan');
+        return view('admin.index', compact('jumlahTransaksi', 'pengambilanRoti', 'jumlahRetur', 'totalUangDisetor', 'totalPiutang', 'saldo'));
     }
 
-    public function penjualanSupervisor()
+    //Mengirim data transaksi dengan relasinya (marketing, roti, retur) ke page admin/penjualan.blade.php
+    public function getPenjualanAdmin()
     {
-        // Mengambil data transaksi untuk supervisor
-        $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'jumlah_pengambilan_roti', 'harga_satuan', 'total_harga']);
-
-        // Mengirimkan data ke view transaksi.penjualan untuk supervisor
-        return view('supervisor.penjualan', compact('transaksi'));
+        $transaksi = Transaksi::with(['marketing', 'roti', 'retur'])->get();
+        return view('admin.penjualan', compact('transaksi'));
     }
 
+    //Mengirim data transaksi dengan relasinya (marketing, roti, retur) ke page admin/retur.blade.php
     public function retur()
     {
-        // Mengambil semua data transaksi
-        $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'jumlah_pengambilan_roti', 'jumlah_retur', 'harga_satuan', 'total_retur']);
+        $transaksi = Transaksi::whereHas('retur') // hanya ambil transaksi yang punya retur
+            ->with(['marketing', 'roti', 'retur'])
+            ->get();
 
-        // Mengirimkan hanya kolom 6-10 ke view transaksi.penjualan
         return view('admin.retur', compact('transaksi'));
     }
 
-    public function setor()
-    {
-        // Mengambil semua data transaksi
-        $transaksi = Transaksi::all(['id', 'tanggal', 'nama_marketing', 'total_setoran', 'uang_disetor', 'sisa_piutang', 'tanggal_setor', 'penerima_setoran']);
 
-        // Mengirimkan hanya kolom 6-10 ke view transaksi.penjualan
-        return view('admin.setor', compact('transaksi'));
+    //Mengirim data transaksi dengan relasinya (marketing, roti, retur) ke page admin/piutang.blade.php
+    public function piutang()
+    {
+        // Ambil hanya transaksi yang punya piutang (saldo masih ada)
+        $transaksi = Transaksi::whereHas('piutang', function ($query) {
+            $query->where('saldo_piutang', '>', 0);
+        })
+            ->with(['marketing', 'roti', 'retur', 'piutang'])
+            ->get();
+
+        return view('admin.piutang', compact('transaksi'));
     }
+
 
     public function create()
     {
-        return view('admin.create');
+        $marketing = Marketing::all();
+        $roti = Roti::all();
+        $wilayah = Wilayah::all();
+        $penerima = Marketing::where('is_penerima_setoran', true)->get();
+        return view('admin.create', compact('marketing', 'roti', 'penerima', 'wilayah'));
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'tanggal' => 'required|date',
-            'nama_marketing' => 'required|string|max:255',
-            'jumlah_pengambilan_roti' => 'required|integer|min:0',
+            'id_marketing' => 'required|exists:mst_marketing,id_marketing',
+            'id_roti' => 'required|exists:mst_roti,id_roti',
+            'id_toko' => 'required|exists:mst_wilayah,id_toko',
+            'jumlah_pengambilan' => 'required|integer|min:0',
             'harga_satuan' => 'required|numeric|min:0',
             'total_harga' => 'required|numeric|min:0',
-            'jumlah_retur' => 'required|integer|min:0',
-            'total_retur' => 'required|numeric|min:0',
+            'jumlah_retur' => 'nullable|integer|min:0',
+            'total_retur' => 'nullable|numeric|min:0',
             'total_setoran' => 'required|numeric|min:0',
-            'uang_disetor' => 'required|numeric|min:0',
-            'sisa_piutang' => 'required|numeric',
+            'uang_disetor' => 'nullable|numeric|min:0',
+            'sisa_piutang' => 'nullable|numeric|min:0',
             'tanggal_setor' => 'nullable|date',
-            'penerima_setoran' => 'nullable|string|max:255',
+            'id_penerima' => 'nullable|exists:mst_marketing,id_marketing',
+            'catatan' => 'nullable|string|max:255',
         ]);
 
-        // Hitung ulang nilai yang dihitung otomatis di form
-        $validatedData['total_harga'] = $request->jumlah_pengambilan_roti * $request->harga_satuan;
-        $validatedData['total_retur'] = $request->jumlah_retur * $request->harga_satuan;
-        $validatedData['total_setoran'] = $validatedData['total_harga'] - $validatedData['total_retur'];
-        $validatedData['sisa_piutang'] = $validatedData['total_setoran'] - $request->uang_disetor;
+        // Tentukan status dan saldo piutang
+        $sisaPiutang = $validated['sisa_piutang'] ?? 0;
+        $status = $sisaPiutang > 0 ? 'Belum Lunas' : 'Lunas';
 
-        // Jika uang disetor lebih besar dari total setoran, kurangi piutang yang ada
-    if ($validatedData['sisa_piutang'] < 0) {
-        $kelebihan = abs($validatedData['sisa_piutang']); // Ambil nilai kelebihan
-        $validatedData['sisa_piutang'] = 0; // Set sisa piutang untuk transaksi baru menjadi 0
+        // Simpan transaksi utama
+        $transaksi = Transaksi::create([
+            'tanggal' => $validated['tanggal'],
+            'id_marketing' => $validated['id_marketing'],
+            'id_roti' => $validated['id_roti'],
+            'id_toko' => $validated['id_toko'],
+            'jumlah_pengambilan' => $validated['jumlah_pengambilan'],
+            'total_harga' => $validated['total_harga'],
+            'total_setoran' => $validated['total_setoran'],
+            'total_retur' => $validated['total_retur'] ?? 0,
+            'saldo_piutang' => $sisaPiutang,
+            'status' => $status,
+            'catatan' => $validated['catatan'] ?? null,
+        ]);
 
-        // Ambil data piutang terakhir dari database (jika perlu)
-        $transaksiTerakhir = Transaksi::latest()->first();
-        if ($transaksiTerakhir) {
-            $transaksiTerakhir->sisa_piutang -= $kelebihan;
-            $transaksiTerakhir->save(); // Simpan pengurangan piutang
+        // Simpan retur jika ada
+        if (($validated['jumlah_retur'] ?? 0) > 0) {
+            ReturDetail::create([
+                'id_transaksi' => $transaksi->id_transaksi,
+                'id_roti' => $validated['id_roti'],
+                'jumlah_retur' => $validated['jumlah_retur'],
+                'total_retur' => $validated['total_retur'] ?? 0,
+            ]);
         }
+
+        // Simpan piutang (selalu simpan piutang agar ada data setoran)
+        $piutang = Piutang::create([
+            'id_transaksi' => $transaksi->id_transaksi,
+            'total_piutang' => $validated['total_setoran'],
+            'saldo_piutang' => $sisaPiutang,
+            'status' => $status,
+        ]);
+
+        // Simpan setoran jika ada input valid
+        if (
+            isset($validated['uang_disetor']) &&
+            $validated['uang_disetor'] > 0 &&
+            !empty($validated['tanggal_setor']) &&
+            !empty($validated['id_penerima'])
+        ) {
+            Setoran::create([
+                'id_piutang' => $piutang->id_piutang,
+                'tanggal_setor' => $validated['tanggal_setor'],
+                'jumlah_setor' => $validated['uang_disetor'],
+                'id_penerima' => $validated['id_penerima'],
+            ]);
+        }
+
+        return redirect()->route('admin.penjualan')->with('success', 'Transaksi berhasil disimpan!');
     }
 
-    // Simpan data baru ke database
-    Transaksi::create($validatedData);
 
-    return redirect()->back()->with('success', 'Data berhasil ditambahkan.');
+    public function detail($id)
+    {
+        $transaksi = Transaksi::with(['marketing', 'roti', 'retur', 'piutang.setoran'])->findOrFail($id);
+
+        return view('admin.detail', compact('transaksi'));
     }
 
     public function edit($id)
     {
-        $transaksi = Transaksi::findOrFail($id); // Cari data transaksi berdasarkan ID
-        return view('admin.edit', compact('transaksi'));
+        $transaksi = Transaksi::with([
+            'marketing',
+            'roti',
+            'retur',
+            'wilayah',
+            'piutang.setoran.penerima'
+        ])->findOrFail($id);
+
+        // Hitung ulang jumlah setoran
+        $jumlahSetoran = $transaksi->piutang?->setoran->sum('jumlah_setor') ?? 0;
+
+        // Hitung ulang sisa piutang real-time
+        $sisaPiutang = max($transaksi->total_setoran - $jumlahSetoran, 0);
+
+        $marketing = Marketing::all();
+        $roti = Roti::all();
+        $wilayah = Wilayah::all();
+        $penerima = Marketing::where('is_penerima_setoran', 1)->get();
+
+        return view('admin.edit', compact(
+            'transaksi',
+            'marketing',
+            'roti',
+            'wilayah',
+            'penerima',
+            'sisaPiutang',
+            'jumlahSetoran'
+        ));
     }
+
 
     public function update(Request $request, $id)
     {
-        $transaksi = Transaksi::findOrFail($id); // Ambil data transaksi berdasarkan ID
-
-        // Validasi data
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'tanggal' => 'required|date',
-            'nama_marketing' => 'required|string|max:255',
-            'jumlah_pengambilan_roti' => 'required|integer|min:0',
+            'id_marketing' => 'required|exists:mst_marketing,id_marketing',
+            'id_roti' => 'required|exists:mst_roti,id_roti',
+            'id_toko' => 'required|exists:mst_wilayah,id_toko',
+            'jumlah_pengambilan' => 'required|integer|min:0',
             'harga_satuan' => 'required|numeric|min:0',
-            'jumlah_retur' => 'required|integer|min:0',
-            'uang_disetor' => 'required|numeric|min:0',
+            'total_harga' => 'required|numeric|min:0',
+            'jumlah_retur' => 'nullable|integer|min:0',
+            'total_retur' => 'nullable|numeric|min:0',
+            'total_setoran' => 'required|numeric|min:0',
+            'uang_disetor' => 'nullable|numeric|min:0',
+            'sisa_piutang' => 'nullable|numeric|min:0',
+            'tanggal_setor' => 'required|date',
+            'id_penerima' => 'required|exists:mst_marketing,id_marketing',
+            'catatan' => 'nullable|string|max:255'
         ]);
 
-        // Hitung ulang nilai otomatis
-        $validatedData['total_harga'] = $request->jumlah_pengambilan_roti * $request->harga_satuan;
-        $validatedData['total_retur'] = $request->jumlah_retur * $request->harga_satuan;
-        $validatedData['total_setoran'] = $validatedData['total_harga'] - $validatedData['total_retur'];
+        $validated['sisa_piutang'] = max(0, ($validated['sisa_piutang'] ?? 0));
 
-        // Ambil data transaksi lama
-        $transaksiLama = Transaksi::findOrFail($id);
+        // Update Transaksi
+        $transaksi = Transaksi::findOrFail($id);
+        $transaksi->update([
+            'tanggal' => $validated['tanggal'],
+            'id_marketing' => $validated['id_marketing'],
+            'id_roti' => $validated['id_roti'],
+            'id_toko' => $validated['id_toko'],
+            'jumlah_pengambilan' => $validated['jumlah_pengambilan'],
+            'total_harga' => $validated['total_harga'],
+            'total_setoran' => $validated['total_setoran'],
+            'total_retur' => $validated['total_retur'] ?? 0,
+            'status' => $validated['sisa_piutang'] > 0 ? 'Belum Lunas' : 'Lunas',
+            'catatan' => $validated['catatan'] ?? null,
+        ]);
 
-        // Hitung ulang sisa piutang
-        $sisaPiutangBaru = $validatedData['total_setoran'] - $request->uang_disetor;
+        // Update atau buat retur hanya jika jumlah_retur > 0
+        if (!empty($validated['jumlah_retur']) && $validated['jumlah_retur'] > 0) {
+            ReturDetail::updateOrCreate(
+                ['id_transaksi' => $transaksi->id_transaksi],
+                [
+                    'id_roti' => $validated['id_roti'],
+                    'jumlah_retur' => $validated['jumlah_retur'],
+                    'total_retur' => $validated['total_retur'] ?? 0
+                ]
+            );
+        } else {
+            // Jika jumlah_retur = 0, hapus retur yang sudah ada
+            ReturDetail::where('id_transaksi', $transaksi->id_transaksi)->delete();
+        }
 
-        // Update sisa piutang di database
-        $validatedData['sisa_piutang'] = max(0, $sisaPiutangBaru);
+        // Update atau buat piutang
+        $piutang = Piutang::updateOrCreate(
+            ['id_transaksi' => $transaksi->id_transaksi],
+            [
+                'total_piutang' => $validated['total_setoran'],
+                'saldo_piutang' => $validated['sisa_piutang'],
+                'status' => $validated['sisa_piutang'] > 0 ? 'Belum Lunas' : 'Lunas'
+            ]
+        );
 
-        // Update data transaksi
-        $transaksiLama->update($validatedData);
+        // Validasi setoran hanya jika semua input lengkap
+        if (
+            !empty($validated['uang_disetor']) &&
+            !empty($validated['tanggal_setor']) &&
+            !empty($validated['id_penerima'])
+        ) {
+            // Batasi agar tidak melebihi total setoran
+            $jumlahDisetor = min($validated['uang_disetor'], $validated['total_setoran']);
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+            Setoran::create([
+                'id_piutang' => $piutang->id_piutang,
+                'tanggal_setor' => $validated['tanggal_setor'],
+                'jumlah_setor' => $jumlahDisetor,
+                'id_penerima' => $validated['id_penerima']
+            ]);
+        }
+
+        return redirect()->route('admin.penjualan')->with('success', 'Data transaksi berhasil diperbarui.');
     }
+
+    public function destroy($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        // Hapus retur dan piutang jika ada
+        if ($transaksi->retur) {
+            $transaksi->retur()->delete();
+        }
+
+        if ($transaksi->piutang) {
+            $transaksi->piutang()->delete();
+        }
+
+        $transaksi->delete();
+
+        return redirect()->route('admin.penjualan')->with('success', 'Transaksi berhasil dihapus.');
+    }
+
 }

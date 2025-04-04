@@ -24,9 +24,7 @@ use Illuminate\Support\Facades\View;
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -219,10 +217,10 @@ use Illuminate\Support\Facades\View;
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.setor') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.setor') }}">
+            <a class="nav-link {{ Request::routeIs('admin.piutang') ? '' : 'collapsed' }}" 
+               href="{{ route('admin.piutang') }}">
                 <i class="bi bi-wallet2"></i>
-                <span>Data Penyetoran</span>
+                <span>Data Piutang</span>
             </a>
         </li><!-- End Dashboard Nav -->
 

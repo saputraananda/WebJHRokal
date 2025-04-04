@@ -1,253 +1,297 @@
 @extends('layout.app')
 
+@section('title')
+    <title>Edit Data Penjualan | Jimmy Hantu Foundation</title>
+@endsection
+
 @section('content')
-<div class="pagetitle">
-            <h1 style="color:#119E45">Edit Transaksi Penjualan</h1>
-            <!-- <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Home</li>
-                    <li class="breadcrumb-item">Tambah Wajib Pajak</li>
-                </ol>
-            </nav> -->
-        </div><!-- End Page Title -->
+    <div class="pagetitle">
+        <h1 style="color:#119E45">Edit Data Transaksi</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.penjualan') }}">Data Penjualan</a></li>
+                <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Detail Transaksi</a></li>
+                <li class="breadcrumb-item active">Edit Transaksi</li>
+            </ol>
+        </nav>
 
-        <section class="section">
-            <div class="row">
-                <div class="col-12">
+    </div><!-- End Page Title -->
 
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="subjudul"
-                                style="color :#000000; font-weight:bold; margin-top: 30px; margin-bottom: 20px;">
-                                Form Edit Transaksi Penjualan</h4>
+    <section class="section">
+        <div class="row">
+            <div class="col-12">
 
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="subjudul text-dark fw-bold mt-4 mb-4">Form Edit Transaksi Penjualan</h4>
 
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('admin.update', $transaksi->id_transaksi) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="row">
+                                {{-- KIRI --}}
+                                <div class="col-md-4">
+                                    {{-- Tanggal --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Tanggal <span class="text-danger">*</span></label>
+                                        <input type="date" name="tanggal" class="form-control"
+                                            value="{{ old('tanggal', $transaksi->tanggal) }}" required>
+                                    </div>
+
+                                    {{-- Nama Marketing --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Marketing <span class="text-danger">*</span></label>
+                                        <select name="id_marketing" class="form-select" required>
+                                            <option disabled>Pilih Marketing</option>
+                                            @foreach($marketing as $item)
+                                                <option value="{{ $item->id_marketing }}" {{ $transaksi->id_marketing == $item->id_marketing ? 'selected' : '' }}>
+                                                    {{ $item->nama_marketing }}
+                                                </option>
+
                                             @endforeach
-                                        </ul>
+                                        </select>
                                     </div>
-                                @endif
 
-                            <!-- General Form Elements -->
-                            <form action="{{ route('transaksi.update', $transaksi->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
+                                    {{-- Wilayah --}}
+                                    <div class="mb-3">
+                                        <label for="id_toko" class="form-label">Wilayah <span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-select" name="id_toko" required>
+                                            <option disabled {{ is_null($transaksi->id_toko ?? null) ? 'selected' : '' }}>
+                                                Pilih Toko</option>
+                                            @foreach($wilayah as $item)
+                                                <option value="{{ $item->id_toko }}"
+                                                    @selected($transaksi->id_toko == $item->id_toko)>
+                                                    {{ $item->nama_toko }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="row mb-3">
-                                <label for="tanggal" class="col-sm-2 col-form-label">Tanggal<span class="text-danger">*</span></label>
-                                    <div class="col-sm-10">
-                                        <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ old('tanggal', $transaksi->tanggal) }}" required>
+                                    {{-- Varian Roti --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Varian Roti <span class="text-danger">*</span></label>
+                                        <select name="id_roti" class="form-select" id="id_roti" required>
+                                            <option disabled>Pilih Roti</option>
+                                            @foreach($roti as $item)
+                                                <option value="{{ $item->id_roti }}" data-harga="{{ $item->harga_satuan }}"
+                                                    @selected($transaksi->id_roti == $item->id_roti)>
+                                                    {{ $item->nama_roti }}
+                                                </option>
+
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    {{-- Jumlah Pengambilan --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Jumlah Pengambilan</label>
+                                        <input type="number" name="jumlah_pengambilan" id="jumlah_pengambilan"
+                                            class="form-control"
+                                            value="{{ old('jumlah_pengambilan', $transaksi->jumlah_pengambilan) }}"
+                                            required>
+                                    </div>
+                                </div>
+                                {{-- TENGAH --}}
+                                <div class="col-md-4">
+                                    {{-- Harga Satuan --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Harga Satuan</label>
+                                        <input type="text" class="form-control" id="harga_satuan_display"
+                                            value="{{ number_format($transaksi->roti->harga_satuan ?? 0, 0, ',', '.') }}"
+                                            readonly>
+                                        <input type="hidden" name="harga_satuan" id="harga_satuan"
+                                            value="{{ $transaksi->roti->harga_satuan ?? 0 }}">
+                                    </div>
+
+                                    {{-- Total Harga --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Harga</label>
+                                        <input type="text" class="form-control" id="total_harga_display"
+                                            value="{{ number_format($transaksi->total_harga, 0, ',', '.') }}" readonly>
+                                        <input type="hidden" name="total_harga" id="total_harga"
+                                            value="{{ $transaksi->total_harga }}">
+                                    </div>
+
+                                    {{-- Jumlah Retur --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Jumlah Retur</label>
+                                        <input type="number" name="jumlah_retur" id="jumlah_retur" class="form-control"
+                                            value="{{ old('jumlah_retur', $transaksi->retur->jumlah_retur ?? 0) }}">
+                                    </div>
+
+                                    {{-- Total Retur --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Retur</label>
+                                        <input type="text" class="form-control" id="total_retur_display"
+                                            value="{{ number_format($transaksi->total_retur ?? 0, 0, ',', '.') }}" readonly>
+                                        <input type="hidden" name="total_retur" id="total_retur"
+                                            value="{{ $transaksi->total_retur ?? 0 }}">
+                                    </div>
+
+                                    {{-- Total Setoran --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Setoran</label>
+                                        <input type="text" class="form-control" id="total_setoran_display"
+                                            value="{{ number_format($transaksi->total_setoran, 0, ',', '.') }}" readonly>
+                                        <input type="hidden" name="total_setoran" id="total_setoran"
+                                            value="{{ $transaksi->total_setoran }}">
                                     </div>
                                 </div>
 
-                                <div class="row mb-3">
-                                    <label for="nama_marketing" class="col-sm-2 col-form-label">Nama Marketing / Pembeli<span class="text-danger">*</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="nama_marketing" name="nama_marketing" value="{{ old('nama_marketing', $transaksi->nama_marketing) }}" required>
+                                {{-- KANAN --}}
+                                <div class="col-md-4">
+                                    {{-- Uang Disetor (Input Tambahan) --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Uang Disetor (Tambahan)</label>
+                                        <input type="number" step="0.01" name="uang_disetor" id="uang_disetor"
+                                            class="form-control" value="{{ old('uang_disetor') }}">
+                                    </div>
+
+                                    {{-- Sisa Piutang --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Sisa Piutang</label>
+
+                                        {{-- Input tampilannya: hanya buat dilihat --}}
+                                        <input type="text" class="form-control" id="sisa_piutang_display"
+                                            value="{{ formatRupiah($sisaPiutang ?? 0) }}" readonly>
+
+                                        {{-- Input yang dikirim ke server (numeric!) --}}
+                                        <input type="hidden" name="sisa_piutang" id="sisa_piutang"
+                                            value="{{ $sisaPiutang ?? 0 }}">
+                                    </div>
+
+
+                                    @php
+                                        $setoranTerakhir = $transaksi->piutang->setoran->sortByDesc('tanggal_setor')->first();
+                                    @endphp
+
+                                    {{-- Tanggal Setor --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Tanggal Setor</label>
+                                        <input type="date" name="tanggal_setor" class="form-control"
+                                            value="{{ old('tanggal_setor', $setoranTerakhir->tanggal_setor ?? '') }}"
+                                            required>
+                                    </div>
+
+                                    <input type="hidden" id="jumlah_setoran_lama" value="{{ $jumlahSetoran }}">
+
+
+                                    @php
+                                        $setoranTerakhir = $transaksi->piutang->setoran->sortByDesc('tanggal_setor')->first();
+                                    @endphp
+
+                                    {{-- Penerima Setoran --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Penerima Setoran</label>
+                                        <select name="id_penerima"
+                                            class="form-select @error('id_penerima') is-invalid @enderror" required>
+                                            <option disabled {{ empty(old('id_penerima', $setoranTerakhir->id_penerima ?? null)) ? 'selected' : '' }}>
+                                                Pilih Penerima
+                                            </option>
+                                            @foreach($penerima as $item)
+                                                <option value="{{ $item->id_marketing }}" @selected(old('id_penerima', $setoranTerakhir->id_penerima ?? null) == $item->id_marketing)>
+                                                    {{ $item->nama_marketing }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        @error('id_penerima')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Catatan --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Catatan</label>
+                                        <input type="text" name="catatan" class="form-control"
+                                            value="{{ $transaksi->catatan }}">
                                     </div>
                                 </div>
+                            </div>
 
-
-                                <div class="row mb-3">
-                                    <label for="jumlah_pengambilan_roti" class="col-sm-2 col-form-label">Jumlah
-                                        Pengambilan
-                                        Roti<span class="text-danger">
-                                            *</span></label>
-                                    <div class="col-sm-10">
-                                        <input type="number" class="form-control" id="jumlah_pengambilan_roti" name="jumlah_pengambilan_roti" min="0" value="{{ old('jumlah_pengambilan_roti', $transaksi->jumlah_pengambilan_roti) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="harga_satuan" class="col-sm-2 col-form-label">Harga Satuan<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="harga_satuan" name="harga_satuan" value="{{ old('harga_satuan', intval($transaksi->harga_satuan)) }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="total_harga" class="col-sm-2 col-form-label otomatis">
-                                        <b>Total Harga</b>
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="total_harga_display" value="{{ old('total_harga', formatRupiah($transaksi->total_harga)) }}" readonly>
-                                        <input type="hidden" id="total_harga" name="total_harga" value="{{ old('total_harga', $transaksi->total_harga) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="jumlah_retur" class="col-sm-2 col-form-label">Jumlah Retur<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="jumlah_retur" name="jumlah_retur" min="0" value="{{ old('jumlah_retur', $transaksi->jumlah_retur) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="total_retur" class="col-sm-2 col-form-label otomatis"><b>Total Retur</b></label>
-                                    <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="total_retur_display" value="{{ old('total_retur', intval($transaksi->total_retur)) }}" readonly>
-                                    <input type="hidden" id="total_retur" name="total_retur" value="{{ old('total_retur', $transaksi->total_retur) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="total_setoran" class="col-sm-2 col-form-label otomatis"><b>Total Setoran</b></label>
-                                    <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="total_setoran_display" value="{{ old('total_setoran', formatRupiah($transaksi->total_setoran)) }}" readonly>
-                                    <input type="hidden" id="total_setoran" name="total_setoran" value="{{old('total_setoran',$transaksi->total_setoran) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="uang_disetor" class="col-sm-2 col-form-label">Uang Disetor<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="uang_disetor"  name="uang_disetor" step="0.01" min="0" value="{{ old('uang_disetor', intval($transaksi->uang_disetor)) }}">
-                                    <small id="formatted_uang_disetor" class="text-muted"></small>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="sisa_piutang" class="col-sm-2 col-form-label otomatis"><b>Sisa Piutang </b></label>
-                                    <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="sisa_piutang_display" value="{{ old('sisa_piutang', formatRupiah($transaksi->sisa_piutang)) }}" readonly>
-                                    <input type="hidden" id="sisa_piutang" name="sisa_piutang" value="{{ old('sisa_piutang', $transaksi->sisa_piutang) }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="tanggal_setor" class="col-sm-2 col-form-label">Tanggal Setor <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="date" class="form-control" id="tanggal_setor" name="tanggal_setor" value="{{ old('tanggal_setor', $transaksi->tanggal_setor) }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="penerima_setoran" class="col-sm-2 col-form-label">Penerima Setoran
-                                        <span class="text-danger">*</span></label>
-                                    <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="penerima_setoran" name="penerima_setoran" value="{{ old('penerima_setoran', $transaksi->penerima_setoran) }}">
-                                    </div>
-                                </div>
-
-                                <h6 class="mt-5">
-                                    <strong> Ket : <span class="text-danger">* </span>Wajib Diisi dan Yang Berwarna <span class="otomatis">Merah</span> Sudah Terisi Otomatis</strong><br>
-                                </h6>
-
-                                <div class="row mb-3">
-                                    <div class="col-sm-100 text-center">
-                                        <button type="submit" class="btn btn-success btn-custom">Update Data</button>
-                                        <button type="reset" class="btn btn-warning btn-custom">Reset</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-success">Update</button>
+                                <a href="{{ route('admin.penjualan') }}" class="btn btn-warning">Kembali</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </section>
-        
+        </div>
+    </section>
 
     <script>
-    // Ambil elemen input
-    const jumlahInput = document.getElementById('jumlah_pengambilan_roti');
-    const hargaInput = document.getElementById('harga_satuan');
-    const totalDisplay = document.getElementById('total_harga_display');
-    const totalHidden = document.getElementById('total_harga');
-    const jumlahRetur = document.getElementById('jumlah_retur');
-    const totalReturDisplay = document.getElementById('total_retur_display');
-    const totalRetur = document.getElementById('total_retur');
-    const totalSetoran = document.getElementById('total_setoran');
-    const totalSetoranDisplay = document.getElementById('total_setoran_display');
-    const uangDisetor = document.getElementById('uang_disetor');
-    const sisaPiutangDisplay = document.getElementById('sisa_piutang_display');
-    const sisaPiutang = document.getElementById('sisa_piutang');
+        const rotiSelect = document.getElementById('id_roti');
+        const jumlahPengambilan = document.getElementById('jumlah_pengambilan');
+        const jumlahRetur = document.getElementById('jumlah_retur');
+        const hargaSatuanInput = document.getElementById('harga_satuan');
+        const hargaSatuanDisplay = document.getElementById('harga_satuan_display');
+        const uangDisetorInput = document.getElementById('uang_disetor');
 
+        // 👉 NEW: Ambil setoran sebelumnya dari hidden input
+        const jumlahSetoranLamaInput = document.getElementById('jumlah_setoran_lama');
 
-    // Fungsi untuk memformat angka menjadi format rupiah
-    function formatRupiah(angka) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(angka);
-    }
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR'
+            }).format(angka || 0);
+        }
 
-    // Fungsi untuk menghitung total harga
-    function hitungTotalHarga() {
-        const jumlah = parseFloat(jumlahInput.value) || 0; // Jika kosong, default ke 0
-        const harga = parseFloat(hargaInput.value) || 0;   // Jika kosong, default ke 0
-        const total = jumlah * harga;                     // Hitung total harga
+        function hitungSemua() {
+            const jumlah = parseInt(jumlahPengambilan.value) || 0;
+            const retur = parseInt(jumlahRetur.value) || 0;
+            const harga = parseFloat(hargaSatuanInput.value) || 0;
+            const uangDisetor = parseFloat(uangDisetorInput.value) || 0;
+            const jumlahSetoranLama = parseFloat(jumlahSetoranLamaInput?.value) || 0;
 
-        totalDisplay.value = formatRupiah(total);         // Tampilkan dalam format rupiah
-        totalHidden.value = total.toFixed(2);             // Simpan nilai asli di input hidden
+            const totalHarga = jumlah * harga;
+            const totalRetur = retur * harga;
+            const totalSetoran = totalHarga - totalRetur;
 
-        // Panggil fungsi untuk menghitung setoran
-        hitungTotalSetoran();
-    }
+            const totalDisetor = uangDisetor + jumlahSetoranLama;
+            const sisaPiutang = Math.max(totalSetoran - totalDisetor, 0);
 
-    // Fungsi untuk menghitung total retur
-    function hitungTotalRetur() {
-        const jumlah = parseFloat(jumlahRetur.value) || 0; // Jika kosong, default ke 0
-        const harga = parseFloat(hargaInput.value) || 0;   // Jika kosong, default ke 0
-        const total = jumlah * harga;                     // Hitung total retur
+            // Update ke input form
+            document.getElementById('total_harga').value = totalHarga;
+            document.getElementById('total_harga_display').value = formatRupiah(totalHarga);
 
-        totalReturDisplay.value = formatRupiah(total);    // Tampilkan dalam format rupiah
-        totalRetur.value = total.toFixed(2);              // Simpan nilai asli di input hidden
+            document.getElementById('total_retur').value = totalRetur;
+            document.getElementById('total_retur_display').value = formatRupiah(totalRetur);
 
-        // Panggil fungsi untuk menghitung setoran
-        hitungTotalSetoran();
-    }
+            document.getElementById('total_setoran').value = totalSetoran;
+            document.getElementById('total_setoran_display').value = formatRupiah(totalSetoran);
 
-    // Fungsi untuk menghitung total setoran
-    function hitungTotalSetoran() {
-        const totalHarga = parseFloat(totalHidden.value) || 0; // Ambil nilai total harga
-        const totalReturNilai = parseFloat(totalRetur.value) || 0; // Ambil nilai total retur
-        const total = totalHarga - totalReturNilai;              // Hitung total setoran
+            document.getElementById('sisa_piutang').value = sisaPiutang;
+            document.getElementById('sisa_piutang_display').value = formatRupiah(sisaPiutang);
+        }
 
-        totalSetoranDisplay.value = formatRupiah(total);        // Tampilkan dalam format rupiah
-        totalSetoran.value = total.toFixed(2);                  // Simpan nilai asli di input hidden
-    }
+        rotiSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const harga = selectedOption.getAttribute('data-harga') || 0;
 
-    // Fungsi untuk menghitung sisa piutang
-    function hitungSisaPiutang() {
-        const totalSetoranNilai = parseFloat(totalSetoran.value) || 0; // Ambil nilai total setoran
-        const uangDisetorNilai = parseFloat(uangDisetor.value) || 0;   // Ambil nilai uang disetor
-        const sisa = totalSetoranNilai - uangDisetorNilai;             // Hitung sisa piutang
+            hargaSatuanInput.value = harga;
+            hargaSatuanDisplay.value = formatRupiah(harga);
+            hitungSemua();
+        });
 
-        sisaPiutangDisplay.value = formatRupiah(sisa);                // Tampilkan dalam format rupiah
-        sisaPiutang.value = sisa.toFixed(2);                          // Simpan nilai asli di input hidden
-    }
+        [jumlahPengambilan, jumlahRetur, uangDisetorInput].forEach(input => {
+            input.addEventListener('input', hitungSemua);
+        });
 
-    // Tambahkan event listener untuk menghitung sisa piutang saat uang disetor berubah
-    uangDisetor.addEventListener('input', hitungSisaPiutang);
-
-    // Panggil fungsi sisa piutang setiap kali total setoran diperbarui
-    function hitungTotalSetoran() {
-        const totalHarga = parseFloat(totalHidden.value) || 0; // Ambil nilai total harga
-        const totalReturNilai = parseFloat(totalRetur.value) || 0; // Ambil nilai total retur
-        const total = totalHarga - totalReturNilai;              // Hitung total setoran
-
-        totalSetoranDisplay.value = formatRupiah(total);        // Tampilkan dalam format rupiah
-        totalSetoran.value = total.toFixed(2);                  // Simpan nilai asli di input hidden
-
-        // Panggil hitung sisa piutang
-        hitungSisaPiutang();
-    }
-
-    // Tambahkan event listener ke input jumlah, harga, dan jumlah retur
-    jumlahInput.addEventListener('input', hitungTotalHarga);
-    hargaInput.addEventListener('input', hitungTotalHarga);
-    jumlahRetur.addEventListener('input', hitungTotalRetur);
-</script>
+        // Saat halaman pertama kali dibuka
+        window.addEventListener('DOMContentLoaded', hitungSemua);
+    </script>
 @endsection
