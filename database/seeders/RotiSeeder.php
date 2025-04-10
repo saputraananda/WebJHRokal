@@ -14,22 +14,28 @@ class RotiSeeder extends Seeder
     {
         DB::table('mst_roti')->insert([
             [
-                'nama_roti' => 'Roti Sobek Coklat',
-                'harga_satuan' => 5000,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'nama_roti' => 'Coklat',
+                'harga_satuan' => 3000,
+                'created_at' => now()->setDate(2023, 1, 1),
+                'updated_at' => now()->setDate(2023, 1, 1),
             ],
             [
-                'nama_roti' => 'Roti Tawar Kupas',
-                'harga_satuan' => 7000,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'nama_roti' => 'Keju',
+                'harga_satuan' => 3000,
+                'created_at' => now()->setDate(2023, 1, 1),
+                'updated_at' => now()->setDate(2023, 1, 1),
             ],
             [
-                'nama_roti' => 'Roti Isi Keju',
-                'harga_satuan' => 6500,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'nama_roti' => 'Coklat Keju',
+                'harga_satuan' => 3500,
+                'created_at' => now()->setDate(2023, 1, 1),
+                'updated_at' => now()->setDate(2023, 1, 1),
+            ],
+            [
+                'nama_roti' => 'Abon',
+                'harga_satuan' => 3500,
+                'created_at' => now()->setDate(2023, 1, 1),
+                'updated_at' => now()->setDate(2023, 1, 1),
             ],
         ]);
     }

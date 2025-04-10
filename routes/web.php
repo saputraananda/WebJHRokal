@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Supervisor\SupervisorController;
+use App\Http\Controllers\ForecastController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +32,7 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin','nocache'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'getScorecard'])->name('admin.index');
 
-    Route::get('/prediksi', function () {return view('admin.predict');})->name('admin.predict');
+    Route::get('/prediksi', [ForecastController::class, 'index'])->name('admin.predict');
 
     Route::get('/penjualan', [AdminController::class, 'getPenjualanAdmin'])->name('admin.penjualan');
     Route::get('/retur', [AdminController::class, 'retur'])->name('admin.retur');

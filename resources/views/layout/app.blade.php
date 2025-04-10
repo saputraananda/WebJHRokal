@@ -1,6 +1,6 @@
 @php
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\View;
+    use Illuminate\Support\Facades\Request;
+    use Illuminate\Support\Facades\View;
 @endphp
 
 <!DOCTYPE html>
@@ -24,7 +24,9 @@ use Illuminate\Support\Facades\View;
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -42,9 +44,11 @@ use Illuminate\Support\Facades\View;
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        .otomatis{
-            color:rgb(255, 0, 0);
+        @yield('customCss')
+        .otomatis {
+            color: rgb(255, 0, 0);
         }
+
         .copirite {
             margin-top: -20px;
         }
@@ -81,25 +85,30 @@ use Illuminate\Support\Facades\View;
             font-family: Arial, sans-serif;
             margin: 20px 0;
             font-size: 14px;
-            text-align: center; /* Pusatkan teks secara horizontal */
+            text-align: center;
+            /* Pusatkan teks secara horizontal */
         }
 
         /* Header tabel */
         .table thead th {
-            background-color: #119E45; /* Hijau */
+            background-color: #119E45;
+            /* Hijau */
             color: white;
             padding: 10px;
             text-align: center !important;
             border: 1px solid #ddd;
-            vertical-align: middle; /* Pusatkan teks secara vertikal */
+            vertical-align: middle;
+            /* Pusatkan teks secara vertikal */
         }
 
         /* Sel tabel */
         .table tbody td {
             border: 1px solid #ddd;
             padding: 10px;
-            vertical-align: middle; /* Pusatkan teks secara vertikal */
-            text-align: center; /* Pusatkan teks secara horizontal */
+            vertical-align: middle;
+            /* Pusatkan teks secara vertikal */
+            text-align: center;
+            /* Pusatkan teks secara horizontal */
         }
 
         /* Alternating row colors for better readability */
@@ -119,7 +128,8 @@ use Illuminate\Support\Facades\View;
         .iframe-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* Rasio 16:9 (lebar/tinggi * 100) */
+            padding-bottom: 56.25%;
+            /* Rasio 16:9 (lebar/tinggi * 100) */
             height: 0;
             overflow: hidden;
         }
@@ -133,9 +143,9 @@ use Illuminate\Support\Facades\View;
             height: 100%;
             border: 0;
         }
-
-        
     </style>
+</head>
+
 <body>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -160,7 +170,7 @@ use Illuminate\Support\Facades\View;
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>Admin</h6>
+                            <h6>{{ $user->username }}</h6>
                             <span>Jimmy Hantu Foundation</span>
                         </li>
                         <li>
@@ -190,78 +200,79 @@ use Illuminate\Support\Facades\View;
     </header><!-- End Header -->
 
     <!-- ======= Sidebar ======= -->
-<aside id="sidebar" class="sidebar">
-    <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.index') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.index') }}">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard Utama</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.index') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.index') }}">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard Utama</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.penjualan') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.penjualan') }}">
-                <i class="bi bi-receipt-cutoff"></i>
-                <span>Data Penjualan</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.penjualan') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.penjualan') }}">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    <span>Data Penjualan</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.retur') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.retur') }}">
-                <i class="bi bi-backspace"></i>
-                <span>Data Retur</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.retur') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.retur') }}">
+                    <i class="bi bi-backspace"></i>
+                    <span>Data Retur</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.piutang') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.piutang') }}">
-                <i class="bi bi-wallet2"></i>
-                <span>Data Piutang</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.piutang') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.piutang') }}">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Data Piutang</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.create') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.create') }}">
-                <i class="bi bi-file-plus"></i>
-                <span>Tambah Transaksi</span>
-            </a>
-        </li><!-- End Forms Tambah Wajib Pajak -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.create') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.create') }}">
+                    <i class="bi bi-file-plus"></i>
+                    <span>Tambah Transaksi</span>
+                </a>
+            </li><!-- End Forms Tambah Wajib Pajak -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('admin.predict') ? '' : 'collapsed' }}" 
-               href="{{ route('admin.predict') }}">
-                <i class="bi bi-bar-chart"></i>
-                <span>Prediksi Penjualan</span>
-            </a>
-        </li><!-- End Forms Tambah Wajib Pajak -->
-    </ul>
-</aside><!-- END SIDEBAR-->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.predict') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.predict') }}">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Prediksi Penjualan</span>
+                </a>
+            </li><!-- End Forms Tambah Wajib Pajak -->
+        </ul>
+    </aside><!-- END SIDEBAR-->
 
     <main id="main" class="main">
-         @yield('content')
+        @yield('content')
 
-         <!-- Copyright -->
-         @unless(View::hasSection('hide_footer'))
-        <footer>
-            <div class="copirite">
-                <div class="text-center text-black p-1">
-                    © Jimmy Hantu Foundation |
-                    <a class="text-black" href="https://petaniberdasi.com">Saatnya Petani Berdasi</a>
+        <!-- Copyright -->
+        @unless(View::hasSection('hide_footer'))
+            <footer>
+                <div class="copirite">
+                    <div class="text-center text-black p-1">
+                        © Jimmy Hantu Foundation |
+                        <a class="text-black" href="https://petaniberdasi.com">Saatnya Petani Berdasi</a>
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
         @endunless
         <!-- Copyright -->
 
     </main>
 
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
@@ -278,16 +289,52 @@ use Illuminate\Support\Facades\View;
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Cek apakah ada flash message 'success'
+            const currentPath = window.location.pathname;
+
             @if(session('success'))
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: '{{ session("success") }}',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
+                @if(request()->routeIs('login') || request()->is('login') || request()->routeIs('admin.index'))
+                    // KALO LAGI DI LOGIN PAGE, TOAST AJA
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '{{ session("success") }}',
+                        showConfirmButton: false,
+                        timer: 6000,
+                        timerProgressBar: true
+                    });
+                @else
+                    // DI HALAMAN LAIN, TAMPIL MODAL BIASA
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: '{{ session("success") }}',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                @endif
             @endif
-        });
+
+            @if(session('error'))
+                @if(request()->routeIs('login') || request()->is('login') || request()->routeIs('admin.index'))
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: '{{ session("error") }}',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                @else
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: '{{ session("error") }}',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                @endif
+            @endif
+    });
     </script>
 
     <script>
@@ -310,4 +357,5 @@ use Illuminate\Support\Facades\View;
     </script>
 
 </body>
+
 </html>

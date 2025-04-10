@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
             RotiSeeder::class,
             WilayahSeeder::class,
             MarketingSeeder::class,
-            TransaksiSeeder::class,
-            ReturDetailSeeder::class,
-            PiutangSeeder::class,
-            SetoranSeeder::class,
+            // TransaksiSeeder::class,
+            // ReturDetailSeeder::class,
+            // PiutangSeeder::class,
+            // SetoranSeeder::class,
         ]);
     }
 }

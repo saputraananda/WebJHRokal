@@ -13,6 +13,10 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs" defer></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="bg-[#E6F4EA] flex justify-center items-center min-h-screen px-4">
@@ -34,10 +38,6 @@
             <h3 class="text-3xl font-bold text-[#119E45]">Halaman Login</h3>
             <p class="text-gray-600 mb-4">Silahkan masuk ke akun anda</p>
 
-            @if (session('error'))
-                <div class="bg-red-100 text-red-600 p-3 rounded-lg mb-4">{{ session('error') }}</div>
-            @endif
-
             <form action="{{ route('auth.login') }}" method="POST" class="space-y-4">
                 @csrf
 
@@ -46,9 +46,6 @@
                     <label class="text-sm font-semibold text-gray-700">Username</label>
                     <input type="text" name="username" required placeholder="Masukkan Username"
                         class="w-full bg-gray-100 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#119E45]">
-                    @error('username')
-                        <p class="text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
 
                 <!-- Password -->
@@ -61,9 +58,6 @@
                             👁️
                         </button>
                     </div>
-                    @error('password')
-                        <p class="text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
 
                 <!-- Tombol Login -->
@@ -107,7 +101,6 @@
             animation: marquee 20s linear infinite;
         }
     </style>
-
 </body>
 
 </html>

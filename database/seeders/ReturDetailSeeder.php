@@ -15,8 +15,8 @@ class ReturDetailSeeder extends Seeder
                 'id_roti' => 2,
                 'jumlah_retur' => 4,
                 'total_retur' => 10000,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => now()->setDate(2023, 2, 5),
+                'updated_at' => now()->setDate(2023, 2, 5),
             ]
         ]);
     }

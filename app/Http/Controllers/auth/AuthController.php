@@ -28,12 +28,13 @@ class AuthController extends Controller
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
             session(['username' => $user->username, 'role' => $user->role]);
-
+            session()->flash('success', 'Login berhasil. Selamat datang, ' . $user->username . '!');
+        
             return ($user->role === 'admin')
                 ? redirect()->route('admin.index')
                 : redirect()->route('supervisor.index');
         }
-
-        return back()->withErrors(['login' => 'Username atau password salah.'])->withInput();
+        
+        return back()->with('error', 'Cek Username dan Password Anda Lagi');   
     }
 }

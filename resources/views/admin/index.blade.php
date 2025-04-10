@@ -1,8 +1,20 @@
-@extends('layout.app')
+  @extends('layout.app')
 
-@section('title')
-<title>Dashboard Utama | Jimmy Hantu Foundation</title>
-@endsection
+  @section('title')
+  <title>Dashboard Utama | Jimmy Hantu Foundation</title>
+  @endsection
+
+  @section('customCss')
+  .info-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .info-card:hover {
+      transform: translateY(-8px); /* Naik dikit */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Bayangan soft */
+      z-index: 1;
+  }
+  @endsection
 
 @section('content')
   <div class="pagetitle">

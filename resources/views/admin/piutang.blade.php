@@ -1,7 +1,7 @@
 @extends('layout.app')
 
 @section('title')
-    <title>Data Setor | Jimmy Hantu Foundation</title>
+    <title>Data Piutang | Jimmy Hantu Foundation</title>
 @endsection
 
 @section('content')
