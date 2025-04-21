@@ -14,6 +14,7 @@
     <meta content="" name="description">
     <meta content="" name="keywords">
 
+
     <!-- Favicons -->
     <link href="{{ asset('assets/img/jimmy.png') }}" rel="icon">
     <link href="{{ asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
@@ -42,9 +43,24 @@
     <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <style>
         @yield('customCss')
+
+        /* Chrome, Safari, Edge, Opera */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
         .otomatis {
             color: rgb(255, 0, 0);
         }
@@ -143,10 +159,55 @@
             height: 100%;
             border: 0;
         }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.03);
+            }
+
+            100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Spinner Fullscreen -->
+    <div id="loading-spinner" style="
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.85);
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    display: none; /* default disembunyikan */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+">
+        <img src="{{ asset('assets/img/load.gif') }}" alt="Loading..." style="width: 80px; height: 80px;">
+
+        <h5 style="
+        margin-top: 15px;
+        font-size: 18px;
+        color: #333;
+        animation: pulse 1.5s infinite;
+    ">
+            Sabar yaa!, data prediksi sedang diprosesss...
+        </h5>
+    </div>
+
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -240,15 +301,15 @@
                     <i class="bi bi-file-plus"></i>
                     <span>Tambah Transaksi</span>
                 </a>
-            </li><!-- End Forms Tambah Wajib Pajak -->
+            </li>
 
             <li class="nav-item">
-                <a class="nav-link {{ Request::routeIs('admin.predict') ? '' : 'collapsed' }}"
+                <a class="nav-link with-loader {{ Request::routeIs('admin.predict') ? '' : 'collapsed' }}"
                     href="{{ route('admin.predict') }}">
                     <i class="bi bi-bar-chart"></i>
                     <span>Prediksi Penjualan</span>
                 </a>
-            </li><!-- End Forms Tambah Wajib Pajak -->
+            </li>
         </ul>
     </aside><!-- END SIDEBAR-->
 
@@ -355,6 +416,34 @@
             });
         }
     </script>
+
+    <script>
+        document.querySelectorAll('input[type=number]').forEach(input => {
+            input.addEventListener('wheel', function (e) {
+                this.blur();
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('a.with-loader').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetUrl = this.getAttribute('href');
+
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) {
+                    spinner.style.display = 'flex';
+                }
+
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 300); // biar spinner sempet muncul
+            });
+        });
+    </script>
+
+        @yield('customScript')
 
 </body>
 

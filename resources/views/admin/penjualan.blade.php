@@ -27,7 +27,7 @@
                             <table id="tabelTransaksi" class="table table-bordered align-middle datatable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Nomor Transaksi</th>
+                                        <th>No</th>
                                         <th>Tanggal</th>
                                         <th>Nama Marketing</th>
                                         <th>Varian</th>
@@ -44,7 +44,7 @@
                                     @else
                                         @foreach($transaksi as $trs)
                                             <tr>
-                                                <td>{{ $trs->id_transaksi }}</td>
+                                                <td>{{ $loop->iteration }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($trs->tanggal)->format('d/m/Y') }}</td>
                                                 <td>{{ $trs->marketing->nama_marketing }}</td>
                                                 <td>{{ $trs->roti->nama_roti }}</td>
