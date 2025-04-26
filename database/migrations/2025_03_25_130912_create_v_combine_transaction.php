@@ -20,7 +20,7 @@ return new class extends Migration {
                 t.jumlah_pengambilan,
                 rd.jumlah_retur,
                 r.harga_satuan,
-                t.total_harga AS total_penjualan,
+                t.total_harga,
                 t.total_retur,
                 t.total_setoran,
                 p.saldo_piutang,
