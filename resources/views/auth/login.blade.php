@@ -101,6 +101,47 @@
             animation: marquee 20s linear infinite;
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            //Ini adalah session untuk sukses Logout
+            @if(session('success'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: @json(session('success')),
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            @endif
+            
+            //Ini adalah session untuk salah username atau password (gagal login)
+            @if(session('failed'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: @json(session('failed')),
+                    showConfirmButton: false,
+                    timer: 6000,
+                    timerProgressBar: true
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: @json(session('error')),
+                    showConfirmButton: false,
+                    timer: 6000,
+                    timerProgressBar: true
+                });
+            @endif
+    });
+    </script>
 </body>
 
 </html>

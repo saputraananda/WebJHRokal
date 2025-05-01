@@ -22,9 +22,9 @@ class AdminController extends Controller
         $jumlahTransaksi = ViewCombineTransaction::count();
         $pengambilanRoti = ViewCombineTransaction::sum('jumlah_pengambilan');
         $jumlahRetur = ViewCombineTransaction::sum('jumlah_retur');
-        $totalUangDisetor = ViewCombineTransaction::sum('total_penjualan') - ViewCombineTransaction::sum('saldo_piutang');
+        $totalUangDisetor = ViewCombineTransaction::sum('total_setoran') - ViewCombineTransaction::sum('saldo_piutang');
         $totalPiutang = ViewCombineTransaction::sum('saldo_piutang');
-        $saldo = ViewCombineTransaction::sum('total_penjualan');
+        $saldo = ViewCombineTransaction::sum('total_setoran');
 
         // Tambahan: Total per varian
         $coklat = ViewCombineTransaction::where('nama_roti', 'Coklat')->sum('jumlah_pengambilan');
@@ -69,7 +69,6 @@ class AdminController extends Controller
 
         $labelReturMarketing = $topRetur->pluck('nama_marketing');
         $jumlahReturMarketing = $topRetur->pluck('total_retur');
-
 
 
         return view('admin.index', compact(
@@ -128,7 +127,6 @@ class AdminController extends Controller
 
         return view('admin.piutang', compact('transaksi'));
     }
-
 
     public function create()
     {
@@ -213,7 +211,6 @@ class AdminController extends Controller
 
         return redirect()->route('admin.penjualan')->with('success', 'Transaksi berhasil disimpan!');
     }
-
 
     public function detail($id)
     {

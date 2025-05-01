@@ -1,7 +1,6 @@
 @php
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Session;
+    use Illuminate\Support\Facades\Request;
+    use Illuminate\Support\Facades\View;
 @endphp
 
 <!DOCTYPE html>
@@ -15,10 +14,10 @@ use Illuminate\Support\Facades\Session;
     <meta content="" name="description">
     <meta content="" name="keywords">
 
+
     <!-- Favicons -->
-    <link rel="icon" href="{{asset('assets/img/djp.png')}}" type="image/x-icon">
     <link href="{{ asset('assets/img/jimmy.png') }}" rel="icon">
-    <link href="{{asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets/img/jimmy.png') }}" rel="apple-touch-icon">
 
     <!-- Link Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -44,11 +43,28 @@ use Illuminate\Support\Facades\Session;
     <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <style>
-        .otomatis{
-            color:rgb(255, 0, 0);
+        @yield('customCss')
+
+        /* Chrome, Safari, Edge, Opera */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .otomatis {
+            color: rgb(255, 0, 0);
+        }
+
         .copirite {
             margin-top: -20px;
         }
@@ -85,25 +101,30 @@ use Illuminate\Support\Facades\Session;
             font-family: Arial, sans-serif;
             margin: 20px 0;
             font-size: 14px;
-            text-align: center; /* Pusatkan teks secara horizontal */
+            text-align: center;
+            /* Pusatkan teks secara horizontal */
         }
 
         /* Header tabel */
         .table thead th {
-            background-color: #119E45; /* Hijau */
+            background-color: #119E45;
+            /* Hijau */
             color: white;
             padding: 10px;
             text-align: center !important;
             border: 1px solid #ddd;
-            vertical-align: middle; /* Pusatkan teks secara vertikal */
+            vertical-align: middle;
+            /* Pusatkan teks secara vertikal */
         }
 
         /* Sel tabel */
         .table tbody td {
             border: 1px solid #ddd;
             padding: 10px;
-            vertical-align: middle; /* Pusatkan teks secara vertikal */
-            text-align: center; /* Pusatkan teks secara horizontal */
+            vertical-align: middle;
+            /* Pusatkan teks secara vertikal */
+            text-align: center;
+            /* Pusatkan teks secara horizontal */
         }
 
         /* Alternating row colors for better readability */
@@ -123,7 +144,8 @@ use Illuminate\Support\Facades\Session;
         .iframe-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* Rasio 16:9 (lebar/tinggi * 100) */
+            padding-bottom: 56.25%;
+            /* Rasio 16:9 (lebar/tinggi * 100) */
             height: 0;
             overflow: hidden;
         }
@@ -138,9 +160,54 @@ use Illuminate\Support\Facades\Session;
             border: 0;
         }
 
-        
+        @keyframes pulse {
+            0% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.03);
+            }
+
+            100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+        }
     </style>
+</head>
+
 <body>
+    <!-- Spinner Fullscreen -->
+    <div id="loading-spinner" style="
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.85);
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    display: none; /* default disembunyikan */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+">
+        <img src="{{ asset('assets/img/load.gif') }}" alt="Loading..." style="width: 80px; height: 80px;">
+
+        <h5 style="
+        margin-top: 15px;
+        font-size: 18px;
+        color: #333;
+        animation: pulse 1.5s infinite;
+    ">
+            Sabar yaa!, data prediksi sedang diprosesss...
+        </h5>
+    </div>
+
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -159,14 +226,18 @@ use Illuminate\Support\Facades\Session;
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <!-- <img src={{ asset('assets/img/profil.jpeg') }} alt="Profile" class="rounded-circle"> -->
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Session::get('username') === 'kiki' ? 'Direktur' : 'Supervisor' }}</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ $user->username }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>{{ Session::get('username') === 'yuyun' ? 'Yuyun Puspitasari' : 'Jimmy Mulia N' }}</h6>
-                            <span>Jimmy Hantu Foundation</span>
+                            <h6>{{ $user->username }}</h6>
+                            <span>Supervisor Jimmy Hantu Foundation</span>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -181,7 +252,6 @@ use Illuminate\Support\Facades\Session;
                             </form>
                         </li>
 
-
                     </ul><!-- End Profile Dropdown Items -->
                 </li><!-- End Profile Nav -->
 
@@ -191,70 +261,71 @@ use Illuminate\Support\Facades\Session;
     </header><!-- End Header -->
 
     <!-- ======= Sidebar ======= -->
-<aside id="sidebar" class="sidebar">
-    <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('supervisor.index') ? '' : 'collapsed' }}" 
-               href="{{ route('supervisor.index') }}">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard Utama</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('supervisor.index') ? '' : 'collapsed' }}"
+                    href="{{ route('supervisor.index') }}">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard Utama</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('supervisor.penjualan') ? '' : 'collapsed' }}" 
-               href="{{ route('supervisor.penjualan') }}">
-                <i class="bi bi-receipt-cutoff"></i>
-                <span>Data Penjualan</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('supervisor.penjualan') ? '' : 'collapsed' }}"
+                    href="{{ route('supervisor.penjualan') }}">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    <span>Data Penjualan</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('supervisor.retur') ? '' : 'collapsed' }}" 
-               href="{{ route('supervisor.retur') }}">
-                <i class="bi bi-backspace"></i>
-                <span>Data Retur</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('supervisor.retur') ? '' : 'collapsed' }}"
+                    href="{{ route('supervisor.retur') }}">
+                    <i class="bi bi-backspace"></i>
+                    <span>Data Retur</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('supervisor.setor') ? '' : 'collapsed' }}" 
-               href="{{ route('supervisor.setor') }}">
-                <i class="bi bi-wallet2"></i>
-                <span>Data Piutang</span>
-            </a>
-        </li><!-- End Dashboard Nav -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('supervisor.piutang') ? '' : 'collapsed' }}"
+                    href="{{ route('supervisor.piutang') }}">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Data Piutang</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
-            <a class="nav-link {{ Request::routeIs('supervisor.predict') ? '' : 'collapsed' }}" 
-               href="{{ route('supervisor.predict') }}">
-                <i class="bi bi-bar-chart"></i>
-                <span>Prediksi Penjualan</span>
-            </a>
-        </li><!-- End Forms Tambah Wajib Pajak -->
-    </ul>
-</aside><!-- END SIDEBAR-->
+            <li class="nav-item">
+                <a class="nav-link with-loader {{ Request::routeIs('supervisor.predict') ? '' : 'collapsed' }}"
+                    href="{{ route('supervisor.predict') }}">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Prediksi Penjualan</span>
+                </a>
+            </li>
+        </ul>
+    </aside><!-- END SIDEBAR-->
 
     <main id="main" class="main">
-         @yield('content')
+        @yield('content')
 
-         <!-- Copyright -->
-         @unless(View::hasSection('hide_footer'))
-        <footer>
-            <div class="copirite">
-                <div class="text-center text-black p-1">
-                    © Jimmy Hantu Foundation |
-                    <a class="text-black" href="https://petaniberdasi.com">Saatnya Petani Berdasi</a>
+        <!-- Copyright -->
+        @unless(View::hasSection('hide_footer'))
+            <footer>
+                <div class="copirite">
+                    <div class="text-center text-black p-1">
+                        © Jimmy Hantu Foundation |
+                        <a class="text-black" href="https://petaniberdasi.com">Saatnya Petani Berdasi</a>
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
         @endunless
         <!-- Copyright -->
 
     </main>
 
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
@@ -270,17 +341,81 @@ use Illuminate\Support\Facades\Session;
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Cek apakah ada flash message 'success'
-        @if(session('success'))
-            Swal.fire({
-                title: 'Berhasil!',
-                text: '{{ session("success") }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        @endif
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+
+            @if(session('success'))
+                @if(request()->routeIs('login') || request()->is('login') || request()->routeIs('supervisor.index'))
+                    // KALO LAGI DI LOGIN PAGE, TOAST AJA
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '{{ session("success") }}',
+                        showConfirmButton: false,
+                        timer: 6000,
+                        timerProgressBar: true
+                    });
+                @else
+                    // DI HALAMAN LAIN, TAMPIL MODAL BIASA
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: '{{ session("success") }}',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                @endif
+            @endif
     });
-</script>
+    </script>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang sudah dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+
+    <script>
+        document.querySelectorAll('input[type=number]').forEach(input => {
+            input.addEventListener('wheel', function (e) {
+                this.blur();
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('a.with-loader').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetUrl = this.getAttribute('href');
+
+                const spinner = document.getElementById('loading-spinner');
+                if (spinner) {
+                    spinner.style.display = 'flex';
+                }
+
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 300);
+            });
+        });
+    </script>
+
+    @yield('customScript')
+
 </body>
+
 </html>

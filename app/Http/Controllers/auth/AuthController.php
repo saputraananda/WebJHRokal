@@ -17,7 +17,7 @@ class AuthController extends Controller
         }
         return view('auth.login');
     }
-    
+
     public function login(Request $request)
     {
         $request->validate([
@@ -28,13 +28,14 @@ class AuthController extends Controller
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             $user = Auth::user();
             session(['username' => $user->username, 'role' => $user->role]);
-            session()->flash('success', 'Login berhasil. Selamat datang, ' . $user->username . '!');
-        
+            session()->flash('success', 'Selamat datang, ' . $user->username . '!');
+
             return ($user->role === 'admin')
                 ? redirect()->route('admin.index')
                 : redirect()->route('supervisor.index');
         }
-        
-        return back()->with('error', 'Cek Username dan Password Anda Lagi');   
+
+        session()->flash('failed', 'Login gagal. Cek Username dan Password Anda lagi.');
+        return back()->with('error', 'Cek Username dan Password Anda Lagi');
     }
 }

@@ -30,16 +30,14 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 // RUTE UNTUK ADMIN 
 // ==========================
 Route::middleware(['auth', 'role:admin','nocache'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'getScorecard'])->name('admin.index');
-
-    Route::get('/prediksi', [ForecastController::class, 'index'])->name('admin.predict');
-
-    Route::get('/penjualan', [AdminController::class, 'getPenjualanAdmin'])->name('admin.penjualan');
-    Route::get('/retur', [AdminController::class, 'retur'])->name('admin.retur');
-    Route::get('/piutang', [AdminController::class, 'piutang'])->name('admin.piutang');
+    Route::get('admin/dashboard', [AdminController::class, 'getScorecard'])->name('admin.index');
+    Route::get('admin/prediksi', [ForecastController::class, 'index'])->name('admin.predict');
+    Route::get('admin/penjualan', [AdminController::class, 'getPenjualanAdmin'])->name('admin.penjualan');
+    Route::get('admin/retur', [AdminController::class, 'retur'])->name('admin.retur');
+    Route::get('admin/piutang', [AdminController::class, 'piutang'])->name('admin.piutang');
 
     // Tambah Transaksi
-    Route::get('/tambah', [AdminController::class, 'create'])->name('admin.create');
+    Route::get('admin/tambah', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/', [AdminController::class, 'store'])->name('admin.store');
 
     // Edit & Update Transaksi
@@ -57,9 +55,10 @@ Route::middleware(['auth', 'role:admin','nocache'])->group(function () {
 // RUTE UNTUK SUPERVISOR
 // ==========================
 Route::middleware(['auth', 'role:supervisor','nocache'])->group(function () {
-    Route::get('/supervisor', function () {return view('supervisor.index');})->name('supervisor.index');
-    Route::get('/supervisor/penjualan', [SupervisorController::class, 'penjualanSupervisor'])->name('supervisor.penjualan');
-    Route::get('/supervisor/retur', [SupervisorController::class, 'returSupervisor'])->name('supervisor.retur');
-    Route::get('/supervisor/setor', [SupervisorController::class, 'setorSupervisor'])->name('supervisor.setor');
-    Route::get('/supervisor/predict', function () {return view('supervisor.predict');})->name('supervisor.predict');
+    Route::get('/supervisor',  [SupervisorController::class, 'getScoreCard'])->name('supervisor.index');
+    Route::get('/supervisor/penjualan', [SupervisorController::class, 'getpenjualanSupervisor'])->name('supervisor.penjualan');
+    Route::get('/supervisor/{id}/detail', [SupervisorController::class, 'getDetailSupervisor'])->name('supervisor.detail');
+    Route::get('/supervisor/retur', [SupervisorController::class, 'getReturSupervisor'])->name('supervisor.retur');
+    Route::get('/supervisor/piutang', [SupervisorController::class, 'getPiutangSupervisor'])->name('supervisor.piutang');
+    Route::get('/supervisor/predict', [ForecastController::class, 'index'])->name('supervisor.predict');
 });

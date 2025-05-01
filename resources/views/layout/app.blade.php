@@ -354,7 +354,6 @@
 
             @if(session('success'))
                 @if(request()->routeIs('login') || request()->is('login') || request()->routeIs('admin.index'))
-                    // KALO LAGI DI LOGIN PAGE, TOAST AJA
                     Swal.fire({
                         toast: true,
                         position: 'top-end',
@@ -363,35 +362,6 @@
                         showConfirmButton: false,
                         timer: 6000,
                         timerProgressBar: true
-                    });
-                @else
-                    // DI HALAMAN LAIN, TAMPIL MODAL BIASA
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: '{{ session("success") }}',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
-                @endif
-            @endif
-
-            @if(session('error'))
-                @if(request()->routeIs('login') || request()->is('login') || request()->routeIs('admin.index'))
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: '{{ session("error") }}',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                @else
-                    Swal.fire({
-                        title: 'Gagal!',
-                        text: '{{ session("error") }}',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
                     });
                 @endif
             @endif

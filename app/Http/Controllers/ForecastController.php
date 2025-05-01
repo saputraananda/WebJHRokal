@@ -195,14 +195,25 @@ class ForecastController extends Controller
                 }
             }
 
-            return view('admin.predict', compact(
-                'forecast_5hari',
-                'forecast_5minggu',
-                'forecast_5bulan',
-                'simulasi_mape',
-                'evaluasi',
-                'mape'
-            ));
+            if (auth()->user()->role === 'admin') {
+                return view('admin.predict', compact(
+                    'forecast_5hari',
+                    'forecast_5minggu',
+                    'forecast_5bulan',
+                    'simulasi_mape',
+                    'evaluasi',
+                    'mape'
+                ));
+            } elseif (auth()->user()->role === 'supervisor') {
+                return view('supervisor.predict', compact(
+                    'forecast_5hari',
+                    'forecast_5minggu',
+                    'forecast_5bulan',
+                    'simulasi_mape',
+                    'evaluasi',
+                    'mape'
+                ));
+            }            
 
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghubungi API Flask: ' . $e->getMessage());
