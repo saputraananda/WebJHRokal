@@ -363,10 +363,18 @@
                         timer: 6000,
                         timerProgressBar: true
                     });
+                @else
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: '{{ session("success") }}',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
                 @endif
             @endif
-    });
+        }); // ← ini harus ada
     </script>
+
 
     <script>
         function confirmDelete(id) {
@@ -413,7 +421,7 @@
         });
     </script>
 
-        @yield('customScript')
+    @yield('customScript')
 
 </body>
 

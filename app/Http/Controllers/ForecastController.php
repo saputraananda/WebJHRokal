@@ -109,7 +109,6 @@ class ForecastController extends Controller
 
 
             // ========= EVALUASI DATA SEBELUMNYA ============
-
             $historicalData = DB::table('tr_transaksi as t')
                 ->leftJoin(DB::raw('(
                     SELECT id_transaksi, SUM(jumlah_retur) as jumlah_retur
@@ -184,7 +183,7 @@ class ForecastController extends Controller
                         ];
                     })
                         ->filter(function ($item) {
-                            return $item['mape_raw'] <= 30; // 🔍 hanya MAPE ≤ 30%
+                            return $item['mape_raw'] <= 30; // hanya MAPE ≤ 30%
                         })
                         ->values()
                         ->reverse(); // urutan terbaru di atas
