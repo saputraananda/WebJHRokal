@@ -51,7 +51,7 @@
                                                 <td>{{ formatRupiah($trs->retur->total_retur ?? 0) }}</td>
                                                 <td class="text-center">
                                                     <div class="d-flex justify-content-center gap-2">
-                                                        <a href="{{ route('admin.detail', $trs->id_transaksi) }}"
+                                                        <a href="{{ route('supervisor.detail', $trs->id_transaksi) }}"
                                                             class="btn btn-warning btn-sm" title="Detail">
                                                             <i class="fas fa-eye"></i>
                                                         </a>

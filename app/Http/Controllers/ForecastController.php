@@ -6,27 +6,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class ForecastController extends Controller
 {
     public function index()
     {
         // Ambil 1 data terakhir dari database (tanggal terbaru)
-        $data = DB::table('tr_transaksi as t')
-            ->leftJoin(DB::raw('(
-                SELECT id_transaksi, SUM(jumlah_retur) as jumlah_retur
-                FROM tr_retur_detail
-                GROUP BY id_transaksi
-            ) as r'), 't.id_transaksi', '=', 'r.id_transaksi')
-            ->select(
-                't.tanggal',
-                't.jumlah_pengambilan',
-                DB::raw('COALESCE(r.jumlah_retur, 0) as jumlah_retur'),
-                DB::raw('(t.jumlah_pengambilan - COALESCE(r.jumlah_retur, 0)) as total_penjualan')
-            )
-            ->orderBy('t.tanggal', 'desc')
-            ->take(1)
-            ->get();
+        $data = collect(
+            DB::select("
+        SELECT t.tanggal,
+               t.jumlah_pengambilan,
+               COALESCE(r.jumlah_retur, 0) as jumlah_retur,
+               (t.jumlah_pengambilan - COALESCE(r.jumlah_retur, 0)) as total_penjualan
+        FROM tr_transaksi t
+        LEFT JOIN (
+            SELECT id_transaksi, SUM(jumlah_retur) as jumlah_retur
+            FROM tr_retur_detail
+            GROUP BY id_transaksi
+        ) r ON t.id_transaksi = r.id_transaksi
+        ORDER BY t.tanggal DESC
+        LIMIT 150
+        ")
+        )->sortBy('tanggal')->values();
 
         $last_sequence = $data->map(function ($item) {
             $tanggal = Carbon::parse($item->tanggal);
@@ -67,7 +69,7 @@ class ForecastController extends Controller
             // ========== 5 Hari ke Depan ==========
             $forecast_5hari = $all_predictions->take(5)->map(function ($val, $index) use ($all_dates) {
                 return [
-                    'tanggal' => \Carbon\Carbon::parse($all_dates[$index] ?? now()->addDays($index + 1))->format('Y-m-d'),
+                    'tanggal' => Carbon::parse($all_dates[$index] ?? now()->addDays($index + 1))->format('Y-m-d'),
                     'prediksi' => number_format($val, 2),
                 ];
             });
@@ -89,7 +91,7 @@ class ForecastController extends Controller
             // ========== 5 Bulan ke Depan (kelompok dari tanggal) ==========
             $forecast_5bulan = collect();
             $grouped = $all_dates->map(function ($tgl, $i) use ($all_predictions) {
-                $carbon = \Carbon\Carbon::parse($tgl);
+                $carbon = Carbon::parse($tgl);
                 return [
                     'bulan' => $carbon->translatedFormat('F Y'), // Contoh: "Januari 2025"
                     'value' => (float) $all_predictions[$i],
@@ -120,10 +122,10 @@ class ForecastController extends Controller
                     DB::raw('(t.jumlah_pengambilan - COALESCE(r.jumlah_retur, 0)) as total_penjualan')
                 )
                 ->orderBy('t.tanggal', 'asc')
-                ->limit(150)
+                ->limit(100)
                 ->get();
 
-            if ($historicalData->count() >= 150) {
+            if ($historicalData->count() >= 100) {
                 $lastDate = Carbon::parse($historicalData->last()->tanggal);
 
                 $actualData = DB::table('tr_transaksi as t')
@@ -158,7 +160,8 @@ class ForecastController extends Controller
                     $responseEval = $client->post('http://127.0.0.1:5000/evaluate', [
                         'json' => [
                             'historical_sequence' => $historical_sequence,
-                            'actual_values' => $actual_values
+                            'actual_values' => $actual_values,
+                            'start_date' => $actualData->first()->tanggal  // <<== Tambahan penting
                         ]
                     ]);
 
@@ -183,7 +186,7 @@ class ForecastController extends Controller
                         ];
                     })
                         ->filter(function ($item) {
-                            return $item['mape_raw'] <= 30; // hanya MAPE ≤ 30%
+                            return $item['mape_raw'] <= 20; // hanya MAPE ≤ 30%
                         })
                         ->values()
                         ->reverse(); // urutan terbaru di atas
@@ -194,6 +197,25 @@ class ForecastController extends Controller
                 }
             }
 
+
+            // CHART Prediksi 30 Hari Kedepan
+            $response = Http::post('http://127.0.0.1:5000/predict', [
+                'last_sequence' => $last_sequence,
+                'last_date' => $last_date
+            ]);
+
+            $data = $response->json();
+
+            $labelTanggal = collect($data['tanggal'])->take(30)->map(function ($tgl) {
+                return Carbon::parse($tgl)->translatedFormat('d M Y'); // misalnya: 07 Jan 2025
+            })->toArray();
+
+            $prediksi30Hari = collect($data['prediksi'])->take(30)->map(function ($val) {
+                return round($val, 2);
+            })->toArray();
+            
+            // CHART Prediksi 30 Hari Kedepan Selesai
+
             if (auth()->user()->role === 'admin') {
                 return view('admin.predict', compact(
                     'forecast_5hari',
@@ -201,7 +223,9 @@ class ForecastController extends Controller
                     'forecast_5bulan',
                     'simulasi_mape',
                     'evaluasi',
-                    'mape'
+                    'mape',
+                    'labelTanggal',
+                    'prediksi30Hari'
                 ));
             } elseif (auth()->user()->role === 'supervisor') {
                 return view('supervisor.predict', compact(
@@ -210,9 +234,11 @@ class ForecastController extends Controller
                     'forecast_5bulan',
                     'simulasi_mape',
                     'evaluasi',
-                    'mape'
+                    'mape',
+                    'labelTanggal',
+                    'prediksi30Hari'
                 ));
-            }            
+            }
 
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghubungi API Flask: ' . $e->getMessage());

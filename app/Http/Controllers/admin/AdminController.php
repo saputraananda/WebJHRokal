@@ -41,7 +41,7 @@ class AdminController extends Controller
         ')
             ->groupBy('bln', 'label')
             ->orderBy('bln', 'desc')
-            ->limit(12)
+            ->limit(13)
             ->get()
             ->reverse(); // Biar dari bulan lama ke terbaru
 
@@ -70,6 +70,25 @@ class AdminController extends Controller
         $labelReturMarketing = $topRetur->pluck('nama_marketing');
         $jumlahReturMarketing = $topRetur->pluck('total_retur');
 
+        // Peta Persebaran Lokasi Toko
+        $lokasiToko = ViewCombineTransaction::selectRaw('
+        nama_toko,
+        lokasi_toko,
+        SUM(jumlah_pengambilan) - SUM(jumlah_retur) as total_penjualan
+    ')
+            ->groupBy('nama_toko', 'lokasi_toko')
+            ->get()
+            ->map(function ($item) {
+                // Parsing koordinat dari URL Google Maps
+                if (preg_match('/\?q=([-0-9\.]+),([-0-9\.]+)/', $item->lokasi_toko, $matches)) {
+                    $item->latitude = $matches[1];
+                    $item->longitude = $matches[2];
+                } else {
+                    $item->latitude = null;
+                    $item->longitude = null;
+                }
+                return $item;
+            });
 
         return view('admin.index', compact(
             'jumlahTransaksi',
@@ -88,7 +107,8 @@ class AdminController extends Controller
             'labelPenjualanMarketing',
             'jumlahPenjualanMarketing',
             'labelReturMarketing',
-            'jumlahReturMarketing'
+            'jumlahReturMarketing',
+            'lokasiToko'
         ));
     }
 
@@ -176,15 +196,17 @@ class AdminController extends Controller
             'catatan' => $validated['catatan'] ?? null,
         ]);
 
-        // Simpan retur jika ada
-        if (($validated['jumlah_retur'] ?? 0) > 0) {
-            ReturDetail::create([
-                'id_transaksi' => $transaksi->id_transaksi,
-                'id_roti' => $validated['id_roti'],
-                'jumlah_retur' => $validated['jumlah_retur'],
-                'total_retur' => $validated['total_retur'] ?? 0,
-            ]);
-        }
+        // Pastikan jumlah_retur dan total_retur tidak null
+        $validated['jumlah_retur'] = $validated['jumlah_retur'] ?? 0;
+        $validated['total_retur'] = $validated['total_retur'] ?? 0;
+
+        ReturDetail::create([
+            'id_transaksi' => $transaksi->id_transaksi,
+            'id_roti' => $validated['id_roti'],
+            'jumlah_retur' => $validated['jumlah_retur'],
+            'total_retur' => $validated['total_retur'],
+        ]);
+
 
         // Simpan piutang (selalu simpan piutang agar ada data setoran)
         $piutang = Piutang::create([

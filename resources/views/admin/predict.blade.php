@@ -16,10 +16,10 @@
     }
 
     #filterPrediksi:focus {
-        background-color: #ffffff !important;
-        color: #212529 !important;
-        border-color: #ced4da;
-        box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    border-color: #ced4da;
+    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
     }
 @endsection
 
@@ -31,20 +31,21 @@
                     <h5 class="fw-bold mb-0 text-white" id="judulPrediksi">Prediksi Penjualan Harian</h5>
 
                     <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
-                    <span class="text-white d-flex align-items-center">
-                        <i class="bi bi-filter me-1"></i> Tampilkan
-                    </span>
-                    <div class="position-relative">
-                    <select id="filterPrediksi"
-                        class="form-select form-select-sm border-0 shadow-sm rounded-3 bg-white text-dark fw-semibold"
-                        style="min-width: 200px; transition: background-color 0.2s ease;">
-                        <option value="5hari">Harian</option>
-                        <option value="5minggu">Mingguan</option>
-                        <option value="5bulan">Bulanan</option>
-                    </select>
-                        <!-- Icon dropdown custom -->
-                        <i class="bi bi-caret-down-fill position-absolute end-0 top-50 translate-middle-y me-3 text-secondary pointer-events-none"></i>
-                    </div>
+                        <span class="text-white d-flex align-items-center">
+                            <i class="bi bi-filter me-1"></i> Tampilkan
+                        </span>
+                        <div class="position-relative">
+                            <select id="filterPrediksi"
+                                class="form-select form-select-sm border-0 shadow-sm rounded-3 bg-white text-dark fw-semibold"
+                                style="min-width: 200px; transition: background-color 0.2s ease;">
+                                <option value="5hari">Harian</option>
+                                <option value="5minggu">Mingguan</option>
+                                <option value="5bulan">Bulanan</option>
+                            </select>
+                            <!-- Icon dropdown custom -->
+                            <i
+                                class="bi bi-caret-down-fill position-absolute end-0 top-50 translate-middle-y me-3 text-secondary pointer-events-none"></i>
+                        </div>
                     </div>
 
                 </div>
@@ -52,58 +53,74 @@
 
                 <div id="containerPrediksi" class="d-flex justify-content-between flex-wrap gap-2">
                     @foreach($forecast_5hari as $item)
-                            @php
-                                $tanggal = \Carbon\Carbon::parse($item['tanggal']);
-                            @endphp
-                            <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5hari" style="min-width: 130px;">
-                                <div class="fw-bold text-dark" style="font-size: 24px;">{{ number_format($item['prediksi'], 0) }}</div>
-                                <div class="text-muted" style="font-size: 14px;">{{ hariIndo($tanggal) }}</div>
-                                <div class="text-dark" style="font-size: 13px;">{{ $tanggal->format('d') }} {{ bulanIndo($tanggal) }}
-                                    {{ $tanggal->format('Y') }}
-                                </div>
+                        @php
+                            $tanggal = \Carbon\Carbon::parse($item['tanggal']);
+                        @endphp
+                        <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5hari" style="min-width: 130px;">
+                            <div class="fw-bold text-dark" style="font-size: 24px;">{{ number_format($item['prediksi'], 0) }}</div>
+                            <div class="text-muted" style="font-size: 14px;">{{ hariIndo($tanggal) }}</div>
+                            <div class="text-dark" style="font-size: 13px;">{{ $tanggal->format('d') }} {{ bulanIndo($tanggal) }}
+                                {{ $tanggal->format('Y') }}
                             </div>
+                        </div>
                     @endforeach
 
                     @foreach($forecast_5minggu as $item)
-                            @php
-                                $tanggal = \Carbon\Carbon::parse($item['tanggal_awal']);
-                            @endphp
-                            <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5minggu d-none"
-                                style="min-width: 130px;">
-                                <div class="fw-bold text-dark" style="font-size: 24px;">
-                                    {{ number_format((float) $item['total'], 0) }}
-                                </div>
-                                <div class="text-muted" style="font-size: 14px;">
-                                    {{ $item['label'] }}
-                                </div>
-                                <div class="text-dark" style="font-size: 13px;">
-                                    {{ $tanggal->format('d') }} {{ bulanIndo($tanggal) }} {{ $tanggal->format('Y') }}
-                                </div>
+                        @php
+                            $tanggal = \Carbon\Carbon::parse($item['tanggal_awal']);
+                        @endphp
+                        <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5minggu d-none"
+                            style="min-width: 130px;">
+                            <div class="fw-bold text-dark" style="font-size: 24px;">
+                                {{ number_format((float) $item['total'], 0) }}
                             </div>
+                            <div class="text-muted" style="font-size: 14px;">
+                                {{ $item['label'] }}
+                            </div>
+                            <div class="text-dark" style="font-size: 13px;">
+                                {{ $tanggal->format('d') }} {{ bulanIndo($tanggal) }} {{ $tanggal->format('Y') }}
+                            </div>
+                        </div>
                     @endforeach
 
 
                     @foreach($forecast_5bulan as $item)
-                                @php
-                                    $tanggal = \Carbon\Carbon::parse($item['tanggal_awal']); // diambil dari controller
-                                @endphp
-                                <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5bulan d-none"
-                                    style="min-width: 130px;">
-                                    <div class="fw-bold text-dark" style="font-size: 24px;">
-                                        {{ number_format((float) $item['total'], 0) }}
-                                    </div>
-                                    <div class="text-muted" style="font-size: 14px;">Bulan</div>
-                                    <div class="text-dark" style="font-size: 13px;">
-                                        {{ $tanggal->translatedFormat('F Y') }}
-                                    </div>
-                                </div>
+                        @php
+                            $tanggal = \Carbon\Carbon::parse($item['tanggal_awal']); // diambil dari controller
+                        @endphp
+                        <div class="bg-white rounded p-3 text-center flex-fill forecast-card card-5bulan d-none"
+                            style="min-width: 130px;">
+                            <div class="fw-bold text-dark" style="font-size: 24px;">
+                                {{ number_format((float) $item['total'], 0) }}
+                            </div>
+                            <div class="text-muted" style="font-size: 14px;">Bulan</div>
+                            <div class="text-dark" style="font-size: 13px;">
+                                {{ $tanggal->translatedFormat('F Y') }}
+                            </div>
+                        </div>
                     @endforeach
                 </div>
 
-                <h5 class="mt-3 mb-0" style="font-size: 16px;"><b>Mohon dipahami</b>, prediksi bukan satu-satunya acuan untuk menentukan keputusan penjualan.</h5>
+                <h5 class="mt-3 mb-0" style="font-size: 16px;"><b>Mohon dipahami</b>, prediksi bukan satu-satunya acuan untuk
+                    menentukan keputusan penjualan.</h5>
             </div>
         </div>
     @endif
+
+    <!--CHART PEMANTAUAN PENJUALAN & RETUR-->
+    <div class="row mt-5">
+        <!--Diagram Batang-->
+        <div class="col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="fw-bold text-dark mb-3 mt-4 text-center">Grafik Prediksi Penjualan 30 Hari Kedepan</h4>
+                    <div id="grafikPrediksi30Hari"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--CHART PEMANTAUAN PENJUALAN & RETUR SELESAI-->
+
     @if(isset($evaluasi) && count($evaluasi))
         <div class="row">
             <!-- Kolom 1 -->
@@ -146,7 +163,8 @@
                 <div class="card w-100" style="height: 95%;">
                     <div class="card-body">
                         <h4 class="subjudul fw-bold text-dark mt-4">Apa Itu MAPE?</h4>
-                        <p style="text-align: justify;"><strong>MAPE</strong> (Mean Absolute Percentage Error) adalah ukuran yang digunakan untuk
+                        <p style="text-align: justify;"><strong>MAPE</strong> (Mean Absolute Percentage Error) adalah ukuran
+                            yang digunakan untuk
                             mengevaluasi seberapa akurat hasil prediksi terhadap nilai aktual. Nilainya dinyatakan dalam persen,
                             makin kecil nilainya, makin akurat prediksi tersebut.</p>
 
@@ -155,8 +173,8 @@
                         <h5 class="fw-semibold text-primary mt-3">🧮 Rumus MAPE</h5>
                         <div class="bg-light p-3 rounded shadow-sm text-center mb-3">
                             <code class="d-block fs-6">
-                                MAPE = (1/n) × Σ (|Aktual - Prediksi| / |Aktual|) × 100%
-                             </code>
+                                                        MAPE = (1/n) × Σ (|Aktual - Prediksi| / |Aktual|) × 100%
+                                                     </code>
                         </div>
 
                         <p class="mb-1">Keterangan:</p>
@@ -245,6 +263,85 @@
 
             // Trigger saat pertama kali halaman dimuat
             updateForecastView();
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tanggalLabels = @json($labelTanggal);
+            const prediksi = @json($prediksi30Hari);
+
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: 360,
+                    toolbar: { show: false },
+                    fontFamily: 'Poppins, sans-serif'
+                },
+                series: [{
+                    name: 'Prediksi Penjualan',
+                    data: prediksi
+                }],
+                xaxis: {
+                    categories: tanggalLabels,
+                    title: {
+                        text: 'Tanggal',
+                        style: { fontWeight: 600 }
+                    },
+                    labels: {
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 500
+                        }
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: 'Jumlah Penjualan (pcs)',
+                        style: { fontWeight: 600 }
+                    }
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                markers: {
+                    size: 5,
+                    colors: ['#00c897'],
+                    strokeColors: '#fff',
+                    strokeWidth: 2
+                },
+                tooltip: {
+                    x: { format: 'dd MMM yyyy' },
+                    y: {
+                        formatter: function (val) {
+                            return `${val.toLocaleString()} pcs`;
+                        }
+                    }
+                },
+                colors: ['#00c897'],
+                fill: {
+                    type: 'solid',
+                    opacity: 0.9
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return Math.round(val).toLocaleString();
+                    },
+                    style: {
+                        fontWeight: 'bold',
+                        colors: ['#111']
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    fontWeight: 600
+                }
+            };
+
+            new ApexCharts(document.querySelector("#grafikPrediksi30Hari"), options).render();
         });
     </script>
 
