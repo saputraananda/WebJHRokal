@@ -241,7 +241,8 @@ class ForecastController extends Controller
             }
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghubungi API Flask: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghubungi API Fast: ' . $e->getMessage());
         }
     }
 }
+

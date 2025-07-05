@@ -4,6 +4,12 @@
     <title>Data Penjualan | Jimmy Hantu Foundation</title>
 @endsection
 
+@section('customCSS')
+    body {
+        font-family: 'Poppins', 'Nunito', 'Open Sans', sans-serif !important;
+    }
+@endsection
+
 @section('content')
     <div class="pagetitle">
         <h1 style="color:#119E45">Data Transaksi Roti Kalkun</h1>

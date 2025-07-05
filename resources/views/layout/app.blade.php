@@ -101,7 +101,7 @@
         .table {
             width: 100%;
             border-collapse: collapse;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 20px 0;
             font-size: 14px;
             text-align: center;

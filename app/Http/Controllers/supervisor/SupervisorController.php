@@ -39,12 +39,12 @@ class SupervisorController extends Controller
         ')
             ->groupBy('bln', 'label')
             ->orderBy('bln', 'desc')
-            ->limit(12)
+            ->limit(13)
             ->get()
             ->reverse(); // Biar dari bulan lama ke terbaru
 
         // Format untuk frontend
-        $labelBulanan = $monthly->pluck('label'); 
+        $labelBulanan = $monthly->pluck('label'); // Jan, Feb, dst
         $penjualanBulanan = $monthly->pluck('penjualan');
         $returBulanan = $monthly->pluck('retur');
 
@@ -68,6 +68,25 @@ class SupervisorController extends Controller
         $labelReturMarketing = $topRetur->pluck('nama_marketing');
         $jumlahReturMarketing = $topRetur->pluck('total_retur');
 
+        // Peta Persebaran Lokasi Toko
+        $lokasiToko = ViewCombineTransaction::selectRaw('
+        nama_toko,
+        lokasi_toko,
+        SUM(jumlah_pengambilan) - SUM(jumlah_retur) as total_penjualan
+    ')
+            ->groupBy('nama_toko', 'lokasi_toko')
+            ->get()
+            ->map(function ($item) {
+                // Parsing koordinat dari URL Google Maps
+                if (preg_match('/\?q=([-0-9\.]+),([-0-9\.]+)/', $item->lokasi_toko, $matches)) {
+                    $item->latitude = $matches[1];
+                    $item->longitude = $matches[2];
+                } else {
+                    $item->latitude = null;
+                    $item->longitude = null;
+                }
+                return $item;
+            });
 
         return view('supervisor.index', compact(
             'jumlahTransaksi',
@@ -86,7 +105,8 @@ class SupervisorController extends Controller
             'labelPenjualanMarketing',
             'jumlahPenjualanMarketing',
             'labelReturMarketing',
-            'jumlahReturMarketing'
+            'jumlahReturMarketing',
+            'lokasiToko'
         ));
     }
 
@@ -132,5 +152,4 @@ class SupervisorController extends Controller
         return view('supervisor.piutang', compact('transaksi'));
     }
 
-    
 }

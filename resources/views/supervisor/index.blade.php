@@ -5,6 +5,7 @@
 @endsection
 
 @section('customCss')
+
     /* === ICON CIRCLE === */
     .icon-shape {
     width: 56px;
@@ -97,6 +98,12 @@
     transform: scale(1.2);
     }
 
+    #peta {
+    height: 500px;
+    width: 100%;
+    border-radius: 12px; /* Membuat sudut melengkung */
+    overflow: hidden; /* Agar tile map tidak keluar dari radius */
+    }
 @endsection
 
 @section('content')
@@ -204,6 +211,8 @@
         </div>
         <!--CHART PEMANTAUAN MARKETING SELESAI-->
 
+
+
         <!-- CARD VARIAN ROTI -->
         <div class="row mt-2">
             <div class="col-12">
@@ -240,6 +249,42 @@
             </div>
         </div>
         <!-- CARD VARIAN ROTI SELESAI-->
+
+        <!--PETA PERSEBARAN WILAYAH-->
+        <div class="row mt-5">
+            <!--Diagram Batang-->
+            <div class="col-lg-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h4 class="fw-bold text-dark mb-3 mt-4 text-center">Persebaran Penjualan Roti Kalkun</h4>
+                        <div id="peta"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--PETA PERSEBARAN WILAYAH-->
+
+        <!--TENTANG WEBSITE-->
+        <div class="row mt-2">
+            <div class="col-lg-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h4 class="fw-bold text-dark mb-3 mt-4">📘 Tentang Website</h4>
+                        <p class="text-muted mb-4">Website ini digunakan untuk memantau dan mengelola penjualan <strong>Roti
+                                Kalkun Jimmy Hantu Foundation</strong> secara real-time.</p>
+
+                        <ul class="timeline-list list-unstyled">
+                            <li><strong>Pengetahuan Umum:</strong> Platform pemantauan penjualan dan manajemen transaksi.
+                            </li>
+                            <li><strong>Monitoring Real-Time:</strong> Cek dan awasi data penjualan kapan saja melalui
+                                dashboard.</li>
+                            <li><strong>Prediksi Penjualan:</strong> Lihat proyeksi stok dan penjualan melalui fitur
+                                prediksi berbasis AI yang akurat.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 @endsection
 
@@ -277,7 +322,7 @@
                 },
                 dataLabels: {
                     enabled: true,
-                    enabledOnSeries: [0, 1], // hanya label di bar, bukan line
+                    enabledOnSeries: [0, 1],
                     offsetY: -10,
                     style: {
                         fontSize: '13px',
@@ -328,8 +373,8 @@
                     }
                 ],
                 xaxis: {
-                    title:{
-                        text:'Bulan',
+                    title: {
+                        text: 'Bulan',
                         style: {
                             fontSize: '14px',
                             fontWeight: 600
@@ -377,14 +422,14 @@
                         const retur = series[1][dataPointIndex];
 
                         return `
-                                    <div class="apex-tooltip-custom px-2 py-1">
-                                        <strong>${bulan}</strong>
-                                        <div class="mt-1">
-                                            <span style="color:#00c897; font-weight: 500;">●</span> Penjualan: <strong>${penjualan.toLocaleString()} pcs</strong><br>
-                                            <span style="color:#ff4d4f; font-weight: 500;">●</span> Retur: <strong>${retur.toLocaleString()} pcs</strong>
-                                        </div>
-                                    </div>
-                                `;
+                                                                                <div class="apex-tooltip-custom px-2 py-1">
+                                                                                    <strong>${bulan}</strong>
+                                                                                    <div class="mt-1">
+                                                                                        <span style="color:#00c897; font-weight: 500;">●</span> Penjualan: <strong>${penjualan.toLocaleString()} pcs</strong><br>
+                                                                                        <span style="color:#ff4d4f; font-weight: 500;">●</span> Retur: <strong>${retur.toLocaleString()} pcs</strong>
+                                                                                    </div>
+                                                                                </div>
+                                                                            `;
                     }
                 }
 
@@ -445,8 +490,8 @@
                     }
                 },
                 xaxis: {
-                    title:{
-                        text:'Nama Marketing',
+                    title: {
+                        text: 'Nama Marketing',
                         style: {
                             fontSize: '14px',
                             fontWeight: 600
@@ -517,4 +562,68 @@
             }).render();
         });
     </script>
+
+    <script>
+        function getColor(penjualan, maxPenjualan) {
+            // Semakin besar penjualan => semakin gelap
+            const intensity = 1 - (penjualan / maxPenjualan); // 0 (gelap) sampai 1 (terang)
+            const lightness = 85 * intensity + 15; // 15% s.d. 100% lightness
+            return `hsl(210, 80%, ${lightness}%)`; // Warna biru gradasi
+        }
+    </script>
+
+    <script>
+        function getColor(penjualan, maxPenjualan) {
+            const ratio = penjualan / maxPenjualan;
+            const hue = 0 + (ratio * 60); // 0 = merah, 60 = kuning
+            return `hsl(${hue}, 100%, 50%)`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('peta').setView([-6.598368, 106.8002825], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            var lokasiToko = @json($lokasiToko);
+            var maxPenjualan = Math.max(...lokasiToko.map(t => t.total_penjualan || 0));
+
+            lokasiToko.forEach(function (toko) {
+                if (toko.latitude && toko.longitude) {
+                    var lat = parseFloat(toko.latitude);
+                    var lng = parseFloat(toko.longitude);
+                    var penjualan = parseInt(toko.total_penjualan) || 0;
+                    var bgColor = getColor(penjualan, maxPenjualan);
+
+                    // Buat marker kustom menggunakan DivIcon
+                    var icon = L.divIcon({
+                        className: '',
+                        html: `
+                                            <div style="
+                                                background:${bgColor};
+                                                width: 20px;
+                                                height: 20px;
+                                                border-radius: 50%;
+                                                border: 2px solid #fff;
+                                                box-shadow: 0 0 5px rgba(0,0,0,0.3);
+                                            "></div>
+                                        `,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10],
+                    });
+
+                    L.marker([lat, lng], { icon: icon })
+                        .addTo(map)
+                        .bindTooltip(`
+                                            <strong>${toko.nama_toko}</strong><br>
+                                            Total Penjualan: ${penjualan}
+                                        `, {
+                            direction: 'top'
+                        });
+                }
+            });
+        });
+    </script>
+
 @endsection
