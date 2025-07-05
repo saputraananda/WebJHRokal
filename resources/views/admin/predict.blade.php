@@ -127,7 +127,7 @@
             <div class="col-lg-7 d-flex align-items-stretch">
                 <div class="card w-100" style="height: 95%;">
                     <div class="card-body">
-                        <h4 class="subjudul fw-bold text-dark mt-4">Evaluasi Keseluruhan</h4>
+                        <h4 class="subjudul fw-bold text-dark mt-4">Evaluasi Tahun Sebelumnya</h4>
                         <p class="mb-3">Rata-rata MAPE (Tingkat Error) <strong>{{ $mape }}%</strong></p>
 
                         <div class="table-responsive">

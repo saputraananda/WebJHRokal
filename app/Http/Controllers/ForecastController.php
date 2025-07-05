@@ -121,12 +121,13 @@ class ForecastController extends Controller
                     't.tanggal',
                     DB::raw('(t.jumlah_pengambilan - COALESCE(r.jumlah_retur, 0)) as total_penjualan')
                 )
+                ->whereYear('t.tanggal',2024)
                 ->orderBy('t.tanggal', 'asc')
                 ->limit(100)
                 ->get();
 
             if ($historicalData->count() >= 100) {
-                $lastDate = Carbon::parse($historicalData->last()->tanggal);
+                // $lastDate = Carbon::parse($historicalData->last()->tanggal);
 
                 $actualData = DB::table('tr_transaksi as t')
                     ->leftJoin(DB::raw('(
@@ -138,7 +139,8 @@ class ForecastController extends Controller
                         't.tanggal',
                         DB::raw('(t.jumlah_pengambilan - COALESCE(r.jumlah_retur, 0)) as total_penjualan')
                     )
-                    ->where('t.tanggal', '>', $lastDate)
+                    // ->where('t.tanggal', '>', $lastDate)
+                    ->whereYear('t.tanggal', 2024)
                     ->orderBy('t.tanggal', 'asc')
                     ->get();
 
